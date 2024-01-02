@@ -1,7 +1,5 @@
 import request from 'supertest';
-
-const url = 'http://localhost:3000';
-
+import { url } from './common';
 
 it('/hello GET', () => {
   return request(url).get('/hello')
