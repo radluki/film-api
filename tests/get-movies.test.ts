@@ -104,3 +104,16 @@ it('/movies GET - should return movies with genres=Animation,Comedy,Thriller', (
       expectMoviesInOrderOfNumberOfGenreMatches(res.body, genres);
     });
 });
+
+it('/movies GET - should return movies with duration=120 and genres=Animation,Comedy,Thriller', () => {
+  return request(url).get('/movies?genres=Animation,Comedy,Thriller&duration=120')
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .expect((res) => {
+      expectListOfMovies(res.body);
+      expectRuntimesInBounds(res.body, 110, 130);
+      const genres = ['Animation', 'Comedy', 'Thriller'];
+      expectMoviesToHaveSpecifiedGenres(res.body, genres);
+      expectMoviesInOrderOfNumberOfGenreMatches(res.body, genres);
+    });
+});
