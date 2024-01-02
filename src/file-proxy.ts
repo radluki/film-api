@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 
 export interface IMutex {
   lock(): Promise<() => void>;
@@ -32,5 +33,26 @@ export class Mutex {
 }
 
 export class FileProxy {
-  constructor(private readonly filename: string) { }
+  constructor(
+    private readonly filename: string,
+    private readonly mutex: IMutex) { }
+
+  async read(): Promise<any> {
+    const unlock = await this.mutex.lock();
+    try {
+      const data = await fs.readFile(this.filename);
+      return JSON.parse(data.toString());
+    } finally {
+      unlock();
+    }
+  }
+
+  async write(data: any): Promise<void> {
+    const unlock = await this.mutex.lock();
+    try {
+      await fs.writeFile(this.filename, JSON.stringify(data));
+    } finally {
+      unlock();
+    }  
+  }
 }
