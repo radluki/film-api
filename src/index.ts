@@ -27,7 +27,9 @@ async function main() {
       .customSanitizer(splitStringToArray)
       .custom(allowedGenresValidator),
   ]), async (req: Request, res: Response) => {
-    const body = await service.getMovies();
+    const duration = +req.query.duration;
+    const genres = req.query.genres as string[];
+    const body = await service.getMovies(duration, genres);
     res.send(body);
   })
 
