@@ -76,14 +76,31 @@ it('/movies GET - should return movies with genres=Animation', () => {
     });
 });
 
-it('/movies GET - should return movies with genres=Animation,Comedy', () => {
-  return request(url).get('/movies?genres=Animation,Comedy')
+function expectMoviesInOrderOfNumberOfGenreMatches(movies: any[], genres: string[]) {
+  const moviesWithNumberOfGenreMatches = movies.map((movie) => {
+    const numberOfGenreMatches = movie.genres.filter((genre) => genres.includes(genre)).length;
+    return { title: movie.title, numberOfGenreMatches };
+  });
+  const sortedMovies = [...moviesWithNumberOfGenreMatches].sort((a, b) => b.numberOfGenreMatches - a.numberOfGenreMatches);
+  
+  expect(moviesWithNumberOfGenreMatches.length).toBeGreaterThan(0);
+  const lastNumberOfMatches = moviesWithNumberOfGenreMatches[moviesWithNumberOfGenreMatches.length-1].numberOfGenreMatches;
+  const firstNumberOfMatches = moviesWithNumberOfGenreMatches[0].numberOfGenreMatches;
+  expect(firstNumberOfMatches).toBeGreaterThan(lastNumberOfMatches);
+  expect(lastNumberOfMatches).toBeGreaterThan(0);
+  expect(moviesWithNumberOfGenreMatches).toEqual(sortedMovies);
+}
+
+it('/movies GET - should return movies with genres=Animation,Comedy,Thriller', () => {
+  return request(url).get('/movies?genres=Animation,Comedy,Thriller')
     .expect(200)
     .expect('Content-Type', /json/)
     .expect((res) => {
       expectListOfMovies(res.body);
       const moviesShorterThan105 = res.body.filter((movie) => movie.runtime < 105);
       expect(moviesShorterThan105.length).toBeGreaterThan(0);
-      expectMoviesToHaveSpecifiedGenres(res.body, ['Animation', 'Comedy']);
+      const genres = ['Animation', 'Comedy', 'Thriller'];
+      expectMoviesToHaveSpecifiedGenres(res.body, genres);
+      expectMoviesInOrderOfNumberOfGenreMatches(res.body, genres);
     });
 });
