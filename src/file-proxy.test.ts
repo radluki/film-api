@@ -1,4 +1,4 @@
-import { FileProxy, IMutex } from "../src/file-proxy";
+import { FileProxy, IMutex } from "./file-proxy";
 import fs from 'fs/promises';
 
 const mutexMock = {

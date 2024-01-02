@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon ./src/index.ts",
+    "test:ut": "jest --rootDir src",
+    "test:ut:watch": "jest --watch --rootDir src",
     "test": "jest",
     "test:watch": "jest --watch"
   },
