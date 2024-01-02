@@ -26,8 +26,9 @@ async function main() {
       .optional()
       .customSanitizer(splitStringToArray)
       .custom(allowedGenresValidator),
-  ]), (req: Request, res: Response) => {
-    res.send('ok');
+  ]), async (req: Request, res: Response) => {
+    const body = await service.getMovies();
+    res.send(body);
   })
 
   const port = 3000;
