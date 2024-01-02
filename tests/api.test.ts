@@ -40,9 +40,8 @@ describe('/movies GET - query parameter validation', () => {
       });
   })
 
-  // TODO restrict to array of enum
-  it('genres can be an array of strings', () => {
-    return request(url).get('/movies?genres=aaa,bbb')
+  it('genres can be an array of strings defined in db.genres', () => {
+    return request(url).get('/movies?genres=Thriller,Mystery')
       .expect(200)
       .expect('Content-Type', /text/)
       .expect((res) => {
@@ -51,11 +50,38 @@ describe('/movies GET - query parameter validation', () => {
   })
 
   it('genres can be a string', () => {
-    return request(url).get('/movies?genres=aaa')
+    return request(url).get('/movies?genres=Animation')
       .expect(200)
       .expect('Content-Type', /text/)
       .expect((res) => {
         expect(res.text).toEqual('ok');
+      });
+  })
+
+  it('1/1 genre not mentioned in db.genres should cause bad request', () => {
+    return request(url).get('/movies?genres=tralala')
+      .expect(400)
+      .expect('Content-Type', /json/)
+      .expect((res) => {
+        expect(res.body.errors).toEqual(['Invalid genres: tralala']);
+      });
+  })
+
+  it('2/2 genres not mentioned in db.genres should cause bad request', () => {
+    return request(url).get('/movies?genres=tralala,blabla')
+      .expect(400)
+      .expect('Content-Type', /json/)
+      .expect((res) => {
+        expect(res.body.errors).toEqual(['Invalid genres: tralala, blabla']);
+      });
+  })
+
+  it('1/2 genres not mentioned in db.genres should cause bad request', () => {
+    return request(url).get('/movies?genres=Animation,blabla')
+      .expect(400)
+      .expect('Content-Type', /json/)
+      .expect((res) => {
+        expect(res.body.errors).toEqual(['Invalid genres: blabla']);
       });
   })
 })

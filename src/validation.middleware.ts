@@ -12,4 +12,14 @@ export const validate = (validations) => {
   };
 };
 
-export const splitStringToArray = (value) => (typeof value === 'string' ? value.split(',') : value)
+export const splitStringToArray = (value) => (typeof value === 'string' ? value.split(',') : [value])
+
+export function getArrayFieldsValidator(allowedElements) {
+  const validator = (value) => {
+    const invalid = value.filter((item) => !allowedElements.includes(item));
+    if (invalid.length == 0)
+      return true;
+    throw new Error(`Invalid genres: ${invalid.join(', ')}`);
+  }
+  return validator;
+}
