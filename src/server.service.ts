@@ -28,7 +28,8 @@ export class ServerService {
   constructor(private readonly fileProxy: FileProxy) { }
 
   async getGenres(): Promise<string[]> {
-    return await this.fileProxy.read().then((data) => data.genres);
+    const dbdata: DbData = this.fileProxy.read();
+    return dbdata.genres;
   }
 
   async createMovie(movie: Movie): Promise<CreationResult> {
@@ -50,7 +51,8 @@ export class ServerService {
   }
 
   async getMovies(duration?: number, genres?: string[]): Promise<Movie[]> {
-    const movies: Movie[] = await this.fileProxy.read().then((data) => data.movies);
+    const dbdata: DbData = this.fileProxy.read();
+    const movies = dbdata.movies;
     if (!duration && !genres)
       return [chooseRandomElement(movies)];
     const durationFiltered = movies.filter(filterByDuration);

@@ -1,3 +1,6 @@
+import fs from 'fs';
+
+
 export const url = 'http://localhost:3000';
 
 export const expectArrayWithSingleMovie = (list: any) => {
@@ -32,4 +35,12 @@ export const expectArrayOfMovies = (list: any) => {
   expect(list).toEqual(expect.any(Array));
   expect(list.length).toBeGreaterThan(1);
   list.forEach(expectSingleMovie);
+}
+
+export function readDbContent(dbpath) {
+  return JSON.parse(fs.readFileSync(dbpath).toString());
+}
+
+export function writeDbContent(dbpath, content) {
+  fs.writeFileSync(dbpath, JSON.stringify(content));
 }

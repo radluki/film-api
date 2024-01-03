@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { url } from './common';
-import fs from 'fs';
+import { readDbContent, url, writeDbContent } from './common';
+import { DbData } from '../src/db.types';
 
 const movie = {
   title: "Beetlejuice 2",
@@ -15,16 +15,16 @@ const movie = {
   actors: "Johnny Depp, Winona Ryder, Dianne Wiest, Anthony Michael Hall",
   plot: "A couple of recently deceased ghosts contract the services of a \"bio-exorcist\" in order to remove the obnoxious new owners of their house.",
 };
-let dbContent: any;
+let dbContent: DbData;
 const dbPath = './data/db.json';
 
 describe('POST /movies - validation', () => {
   beforeEach(() => {
-    dbContent = JSON.parse(fs.readFileSync(dbPath).toString());
+    dbContent = readDbContent(dbPath);
   });
 
   afterEach(async () => {
-    fs.writeFileSync(dbPath, JSON.stringify(dbContent));
+    writeDbContent(dbPath, dbContent);
   });
 
   it('201 - movie with all optional fields', () => {

@@ -1,58 +1,14 @@
-import fs from 'fs/promises';
-
-export interface IMutex {
-  lock(): Promise<() => void>;
-  isLocked(): boolean;
-}
-
-export class Mutex {
-  private unlockPromise: Promise<void>;
-  private locked = false;
-
-  constructor(private timeout: number) { }
-
-  async lock(): Promise<() => void> {
-    const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => {
-        reject(new Error('Mutex lock timeout'));
-      }, this.timeout);
-    });
-
-    await Promise.race([this.unlockPromise, timeoutPromise]);
-    this.locked = true;
-    let unlock;
-    this.unlockPromise = new Promise(
-      (resolve) => unlock = () => { resolve(); this.locked = false; }
-    );
-    return unlock;
-  }
-
-  isLocked(): boolean {
-    return this.locked;
-  }
-}
+import { readFileSync, writeFileSync } from 'fs';
 
 export class FileProxy {
   constructor(
-    private readonly filename: string,
-    private readonly mutex: IMutex) { }
+    private readonly filename: string) { }
 
-  async read(): Promise<any> {
-    const unlock = await this.mutex.lock();
-    try {
-      const data = await fs.readFile(this.filename);
-      return JSON.parse(data.toString());
-    } finally {
-      unlock();
-    }
+  read(): any {
+    return JSON.parse(readFileSync(this.filename).toString());
   }
 
-  async write(data: any): Promise<void> {
-    const unlock = await this.mutex.lock();
-    try {
-      await fs.writeFile(this.filename, JSON.stringify(data));
-    } finally {
-      unlock();
-    }  
+  write(data: any) {
+    writeFileSync(this.filename, JSON.stringify(data));
   }
 }

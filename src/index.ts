@@ -2,16 +2,14 @@ import express, { Request, Response } from 'express';
 import { getArrayFieldsValidator, splitStringToArray, validate } from './validation.middleware';
 import { body, query } from 'express-validator';
 import { CreationFailure, ServerService } from './server.service';
-import { FileProxy, Mutex } from './file-proxy';
+import { FileProxy } from './file-proxy';
 import bodyParser from 'body-parser';
 import { StatusCodes } from 'http-status-codes';
 
 async function main() {
   const app = express();
-  const timeout = 1000;
   const dbPath = './data/db.json';
-  const mutex = new Mutex(timeout);
-  const fileProxy = new FileProxy(dbPath, mutex);
+  const fileProxy = new FileProxy(dbPath);
   const service = new ServerService(fileProxy);
 
   const allowedGenres = await service.getGenres();
@@ -69,11 +67,10 @@ async function main() {
   app.post('/movies', validatePostBody, async (req: Request, res: Response) => {
     const body = req.body;
     const result = await service.createMovie(body);
-    // console.log(result);
-    // if (result instanceof CreationFailure) {
-    //   res.status(result.status).json({ errors: [result.error] });
-    //   return;
-    // }
+    if (result instanceof CreationFailure) {
+      res.status(result.status).json({ errors: [result.error] });
+      return;
+    }
     res.status(StatusCodes.CREATED).json(result);
   });
 
