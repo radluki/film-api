@@ -7,8 +7,7 @@
     "dev": "npx nodemon --ignore ./data/ ./src/index.ts",
     "test:ut": "jest --rootDir src",
     "test:ut:watch": "jest --watch --rootDir src",
-    "test": "jest -- get && jest -- post",
-    "test:watch": "jest --watch"
+    "test": "jest -- get && jest -- post"
   },
   "author": "",
   "license": "ISC",
