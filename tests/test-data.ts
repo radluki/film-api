@@ -2,7 +2,7 @@
 export const movie = {
   title: "Beetlejuice 2",
   year: "1988",
-  runtime: "92",
+  runtime: "1000",
   genres: [
     "Comedy",
     "Fantasy"
