@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express';
 import { getArrayFieldsValidator, splitStringToArray, validate } from './validation.middleware';
 import { body, query } from 'express-validator';
-import { ServerService } from './server.service';
+import { CreationFailure, ServerService } from './server.service';
 import { FileProxy, Mutex } from './file-proxy';
 import bodyParser from 'body-parser';
+import { StatusCodes } from 'http-status-codes';
 
 async function main() {
   const app = express();
@@ -66,9 +67,14 @@ async function main() {
   ]);
 
   app.post('/movies', validatePostBody, async (req: Request, res: Response) => {
-    const body = req.body;
-    console.log(body);
-    res.sendStatus(201);
+    // const body = req.body;
+    // const result = await service.createMovie(body);
+    // if ( result instanceof CreationFailure) {
+    //   res.status(result.status).json({ errors: [result.error] });
+    //   return;
+    // }
+    // res.sendStatus(StatusCodes.CREATED).json(result);
+    res.sendStatus(StatusCodes.CREATED);
   });
 
   const port = 3000;

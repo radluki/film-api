@@ -1,4 +1,18 @@
 import { FileProxy } from "./file-proxy";
+import { Movie, DbData } from "./db.types";
+import { StatusCodes } from 'http-status-codes';
+
+export class CreationSuccess {
+  id: number;
+  message: string;
+}
+
+export class CreationFailure {
+  status: number;
+  error: string;
+}
+
+type CreationResult = CreationSuccess | CreationFailure;
 
 export class ServerService {
   constructor(private readonly fileProxy: FileProxy) { }
@@ -7,11 +21,28 @@ export class ServerService {
     return await this.fileProxy.read().then((data) => data.genres);
   }
 
-  async getMovies(duration?: number, genres?: string[]): Promise<any[]> {
-    const dbdata = await this.fileProxy.read().then((data) => data.movies);
+  async createMovie(movie: Movie): Promise<CreationResult> {
+    const dbdata: DbData = await this.fileProxy.read();
+    if (isTitleDuplicated(movie.title, dbdata.movies))
+      return { status: StatusCodes.CONFLICT, error: `Title "${movie.title}" already exists` };
+    const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
+    dbdata.movies.push(newMovie);
+    await this.fileProxy.write(dbdata);
+    return { id: newMovie.id, message: 'Movie created' };
+
+    function generateNewId(movies: Movie[]) {
+      return movies.reduce((maxId, movie) => Math.max(maxId, movie.id), 0) + 1;
+    }
+    function isTitleDuplicated(title: string, movies: Movie[]) {
+      return movies.find((movie) => movie.title === title);
+    }
+  }
+
+  async getMovies(duration?: number, genres?: string[]): Promise<Movie[]> {
+    const movies: Movie[] = await this.fileProxy.read().then((data) => data.movies);
     if (!duration && !genres)
-      return [chooseRandomElement(dbdata)];
-    const durationFiltered = dbdata.filter(filterByDuration);
+      return [chooseRandomElement(movies)];
+    const durationFiltered = movies.filter(filterByDuration);
     if (!genres) return [chooseRandomElement(durationFiltered)];
     return durationFiltered.map(mapAddingPriority)
       .filter((movie) => movie.priority > 0)

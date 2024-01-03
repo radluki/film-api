@@ -16,15 +16,15 @@ const movie = {
   plot: "A couple of recently deceased ghosts contract the services of a \"bio-exorcist\" in order to remove the obnoxious new owners of their house.",
 };
 let dbContent: any;
-const dbPath = '../data/db.json';
+const dbPath = './data/db.json';
 
 describe('POST /movies - validation', () => {
   beforeEach(() => {
-    dbContent = require(dbPath);
+    dbContent = fs.readFileSync(dbPath).toJSON();
   });
 
   afterEach(async () => {
-    fs.writeFileSync(dbPath, JSON.stringify(dbContent));
+    // fs.writeFileSync(dbPath, JSON.stringify(dbContent));
   });
 
   it('201 - movie with all optional fields', () => {
