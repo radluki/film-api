@@ -15,6 +15,8 @@ export const splitStringToArray = (value) => (typeof value === 'string' ? value.
 
 export function getArrayFieldsValidator(allowedElements) {
   const validator = (value) => {
+    if (!Array.isArray(value))
+      throw new Error('genres must be an array');
     const invalid = value.filter((item) => !allowedElements.includes(item));
     if (invalid.length == 0)
       return true;

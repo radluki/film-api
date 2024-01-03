@@ -1,4 +1,4 @@
-import { Mutex } from "../src/file-proxy";
+import { Mutex } from "./file-proxy";
 
 const timeout = 300;
 

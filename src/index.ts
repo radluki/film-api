@@ -37,10 +37,23 @@ async function main() {
     res.send(body);
   })
 
+  function validateBodyFieldNames(value) {
+    const allowedFields = ['title', 'year', 'runtime', 'director', 'genres', 'actors', 'plot', 'posterUrl'];
+    const unknownFields = Object.keys(value).filter(field => !allowedFields.includes(field));
+    if (unknownFields.length == 0) return true;
+    throw new Error(`Unknown fields: ${unknownFields.join(', ')}`);
+  }
+
   const validatePostBody = validate([
+    body().custom(validateBodyFieldNames),
     body('title').isString().withMessage('title is required'),
     body('year').isNumeric().withMessage('numeric year is required'),
-    body('posterUrl').isURL().withMessage('posterUrl should be a valid URL'),
+    body('runtime').isNumeric().withMessage('numeric runtime is required'),
+    body('director').isString().withMessage('director is required'),
+    body('genres').custom(allowedGenresValidator),
+    body('actors').optional().isString().withMessage('actors is optional string'),
+    body('plot').optional().isString().withMessage('plot is optional string'),
+    body('posterUrl').optional().isURL().withMessage('posterUrl is an optional valid URL'),
   ]);
 
   app.post('/movies', validatePostBody, async (req: Request, res: Response) => {
