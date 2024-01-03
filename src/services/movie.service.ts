@@ -37,7 +37,9 @@ export class MovieService implements IMovieService {
   }
 
   getMovies(duration?: number, genres?: string[]): Movie[] {
-    const movies = this.fileProxy.read().movies.filter(filterByDuration);
+    const dbdata = this.fileProxy.read();
+    if (!dbdata || !dbdata.movies) return [];
+    const movies = dbdata.movies.filter(filterByDuration);
     if (!genres)
       return getListWithRandomElement(movies);
     return filterAndSortByMatchingGenres(movies);
