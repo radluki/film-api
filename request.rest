@@ -1,0 +1,10 @@
+POST http://localhost:3000/movies
+content-type: application/json
+
+{
+    "title": "Dummy Movie 2",
+    "year": 2000,
+    "runtime": 1000,
+    "genres": ["Action", "Comedy"],
+    "director": "Dummy Director"
+}
