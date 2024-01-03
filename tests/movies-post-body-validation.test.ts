@@ -29,8 +29,27 @@ describe('POST /movies - validation', () => {
       .send(invalidMovie)
       .expect(400)
       .expect((res) => {
-        expect(res.body.errors).toEqual(['title is required']);
+        expect(res.body.errors).toEqual(['title is a required string with max length 255']);
       });
+  });
+
+  it('400 - movie with too long title', () => {
+    let invalidMovie = { ...movie };
+    invalidMovie.title = 'a'.repeat(256);
+    return request(url).post('/movies')
+      .send(invalidMovie)
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.errors).toEqual(['title is too long, max length is 255, actual length is 256']);
+      });
+  });
+
+  it('201 - movie with title of max length', () => {
+    let invalidMovie = { ...movie };
+    invalidMovie.title = 'a'.repeat(255);
+    return request(url).post('/movies')
+      .send(movie)
+      .expect(201)
   });
 
   it('400 - movie with invalid year', () => {
@@ -84,8 +103,27 @@ describe('POST /movies - validation', () => {
       .send(invalidMovie)
       .expect(400)
       .expect((res) => {
-        expect(res.body.errors).toEqual(['director is required']);
+        expect(res.body.errors).toEqual(['director is a required string with max length 255']);
       });
+  });
+
+  it('400 - movie with too long director', () => {
+    let invalidMovie = { ...movie };
+    invalidMovie.director = 'a'.repeat(256);
+    return request(url).post('/movies')
+      .send(invalidMovie)
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.errors).toEqual(['director is too long, max length is 255, actual length is 256']);
+      });
+  });
+
+  it('201 - movie with director of max length', () => {
+    let invalidMovie = { ...movie };
+    invalidMovie.director = 'a'.repeat(255);
+    return request(url).post('/movies')
+      .send(movie)
+      .expect(201)
   });
 
   it('400 - movie without genres', () => {
