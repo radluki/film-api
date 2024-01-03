@@ -7,6 +7,8 @@ import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
 import { StatusCodes } from 'http-status-codes';
 import { DBPATH, PORT } from './config';
+import { getMoviesGetQueryValidator } from './middleware/movies-get-query.validation';
+import { getMoviesPostBodyValidator } from './middleware/movies-post-body.validation';
 
 async function main() {
   const app = express();
@@ -19,51 +21,18 @@ async function main() {
   });
 
   const allowedGenres = await service.getGenres();
-  const allowedGenresValidator = getArrayFieldsValidator(allowedGenres);
-  const valdateMoviesGetQuery = validate([
-    query('duration').optional().isNumeric().withMessage('Duration must be a number'),
-    query('genres')
-      .optional()
-      .customSanitizer(splitStringToArray)
-      .custom(allowedGenresValidator),
-  ]);
+  const moviesGetQueryValidator = getMoviesGetQueryValidator(allowedGenres);
 
-  app.get('/movies', valdateMoviesGetQuery, async (req: Request, res: Response) => {
+  app.get('/movies', moviesGetQueryValidator, async (req: Request, res: Response) => {
     const duration = +req.query.duration;
     const genres = req.query.genres as string[];
     const body = await service.getMovies(duration, genres);
     res.send(body);
   })
 
-  function validateBodyFieldNames(value) {
-    const allowedFields = ['title', 'year', 'runtime', 'director', 'genres', 'actors', 'plot', 'posterUrl'];
-    const unknownFields = Object.keys(value).filter(field => !allowedFields.includes(field));
-    if (unknownFields.length == 0) return true;
-    throw new Error(`Unknown fields: ${unknownFields.join(', ')}`);
-  }
+  const moviesPostBodyValidator = getMoviesPostBodyValidator(allowedGenres);
 
-  function getString255Validator(fieldName) {
-    return (value) => {
-      if (typeof value !== 'string') throw new Error(`${fieldName} is a required string with max length 255`);
-      if (value.length > 255)
-        throw new Error(`${fieldName} is too long, max length is 255, actual length is ${value.length}`);
-      return true;
-    }
-  }
-
-  const validatePostBody = validate([
-    body().custom(validateBodyFieldNames),
-    body('title').custom(getString255Validator('title')),
-    body('year').isNumeric().withMessage('numeric year is required'),
-    body('runtime').isNumeric().withMessage('numeric runtime is required'),
-    body('director').custom(getString255Validator('director')),
-    body('genres').custom(allowedGenresValidator),
-    body('actors').optional().isString().withMessage('actors is optional string'),
-    body('plot').optional().isString().withMessage('plot is optional string'),
-    body('posterUrl').optional().isURL().withMessage('posterUrl is an optional valid URL'),
-  ]);
-
-  app.post('/movies', validatePostBody, async (req: Request, res: Response) => {
+  app.post('/movies', moviesPostBodyValidator, async (req: Request, res: Response) => {
     const body = req.body;
     const result = await service.createMovie(body);
     if (result instanceof CreationFailure) {
