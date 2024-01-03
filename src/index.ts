@@ -67,14 +67,14 @@ async function main() {
   ]);
 
   app.post('/movies', validatePostBody, async (req: Request, res: Response) => {
-    // const body = req.body;
-    // const result = await service.createMovie(body);
-    // if ( result instanceof CreationFailure) {
+    const body = req.body;
+    const result = await service.createMovie(body);
+    // console.log(result);
+    // if (result instanceof CreationFailure) {
     //   res.status(result.status).json({ errors: [result.error] });
     //   return;
     // }
-    // res.sendStatus(StatusCodes.CREATED).json(result);
-    res.sendStatus(StatusCodes.CREATED);
+    res.status(StatusCodes.CREATED).json(result);
   });
 
   const port = 3000;

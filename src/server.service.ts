@@ -5,11 +5,21 @@ import { StatusCodes } from 'http-status-codes';
 export class CreationSuccess {
   id: number;
   message: string;
+
+  constructor(status: number, error: string) {
+    this.id = status;
+    this.message = error;
+  }
 }
 
 export class CreationFailure {
   status: number;
   error: string;
+
+  constructor(status: number, error: string) {
+    this.status = status;
+    this.error = error;
+  }
 }
 
 type CreationResult = CreationSuccess | CreationFailure;
@@ -24,11 +34,12 @@ export class ServerService {
   async createMovie(movie: Movie): Promise<CreationResult> {
     const dbdata: DbData = await this.fileProxy.read();
     if (isTitleDuplicated(movie.title, dbdata.movies))
-      return { status: StatusCodes.CONFLICT, error: `Title "${movie.title}" already exists` };
+      return new CreationFailure(StatusCodes.CONFLICT,
+        `Title "${movie.title}" already exists`);
     const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
     dbdata.movies.push(newMovie);
     await this.fileProxy.write(dbdata);
-    return { id: newMovie.id, message: 'Movie created' };
+    return new CreationSuccess(newMovie.id, 'Movie created');
 
     function generateNewId(movies: Movie[]) {
       return movies.reduce((maxId, movie) => Math.max(maxId, movie.id), 0) + 1;

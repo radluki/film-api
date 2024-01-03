@@ -4,7 +4,7 @@
   "description": "Api without db, just filesystem",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon ./src/index.ts",
+    "dev": "npx nodemon --ignore ./data/ ./src/index.ts",
     "test:ut": "jest --rootDir src",
     "test:ut:watch": "jest --watch --rootDir src",
     "test": "jest",

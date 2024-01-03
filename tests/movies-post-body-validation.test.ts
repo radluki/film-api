@@ -3,7 +3,7 @@ import { url } from './common';
 import fs from 'fs';
 
 const movie = {
-  title: "Beetlejuice",
+  title: "Beetlejuice 2",
   year: "1988",
   runtime: "92",
   genres: [
@@ -20,11 +20,11 @@ const dbPath = './data/db.json';
 
 describe('POST /movies - validation', () => {
   beforeEach(() => {
-    dbContent = fs.readFileSync(dbPath).toJSON();
+    dbContent = JSON.parse(fs.readFileSync(dbPath).toString());
   });
 
   afterEach(async () => {
-    // fs.writeFileSync(dbPath, JSON.stringify(dbContent));
+    fs.writeFileSync(dbPath, JSON.stringify(dbContent));
   });
 
   it('201 - movie with all optional fields', () => {
