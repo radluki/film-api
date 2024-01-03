@@ -2,8 +2,8 @@ import { Movie } from "../src/models/db.types";
 
 export const movie: Movie = {
   title: "Beetlejuice 2",
-  year: "1988",
-  runtime: "1000",
+  year: 1988,
+  runtime: 1000,
   genres: [
     "Comedy",
     "Fantasy"

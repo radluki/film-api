@@ -31,6 +31,12 @@ describe('POST /movies - logic', () => {
     expect(getResp.body[0]).toEqual(movie);
   });
 
+  function convertRuntimeAndYearToNUmbers(movie: any) {
+    movie.runtime = parseInt(movie.runtime);
+    movie.year = parseInt(movie.year);
+    return movie;
+  }
+
   it('should create a movie with POST and retrieve directly from db', async () => {
     const postResp = await request(url).post('/movies')
       .send(movie);
@@ -43,7 +49,7 @@ describe('POST /movies - logic', () => {
     const dbdata: DbData = readDbContent(dbPath);
     const addedMovie = dbdata.movies.find((movie) => movie.id === id);
     expect(addedMovie).toBeDefined();
-    expect(addedMovie).toEqual({ ...movie, id });
+    expect(convertRuntimeAndYearToNUmbers(addedMovie)).toEqual({ ...movie, id });
     const idWasInDbBeforeAddition = dbContent.movies.some((movie) => movie.id === id);
     expect(idWasInDbBeforeAddition).toBeFalsy();
   });

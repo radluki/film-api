@@ -51,7 +51,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with invalid year', () => {
-    let invalidMovie = { ...movie };
+    let invalidMovie: any = { ...movie };
     invalidMovie.year = 'invalid year';
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -84,7 +84,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with invalid runtime', () => {
-    let invalidMovie = { ...movie };
+    let invalidMovie: any = { ...movie };
     invalidMovie.runtime = 'invalid runtime';
     return request(url).post('/movies')
       .send(invalidMovie)

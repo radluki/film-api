@@ -2,8 +2,8 @@ export class Movie {
   id?: number;
   genres: string[];
   title: string;
-  year: string;
-  runtime: string;
+  year: number;
+  runtime: number;
   director: string;
   actors?: string;
   plot?: string;

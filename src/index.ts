@@ -8,12 +8,14 @@ import { getMoviesPostBodyValidator } from './middleware/movies-post-body.valida
 import { createMoviesGetController } from './controllers/movies-get.controller';
 import { createMoviesPostController } from './controllers/movies-post.controller';
 import { errorHandler } from './middleware/error-handler';
+import { NumericConversionsFileProxyDecorator } from './utils/file-proxy-decorator';
 
 function main() {
   const app = express();
   app.use(bodyParser.json());
   const fileProxy = new FileProxy(DBPATH);
-  const movieService: IMovieService = new MovieService(fileProxy);
+  const fileProxyWithNumericConversions = new NumericConversionsFileProxyDecorator(fileProxy);
+  const movieService: IMovieService = new MovieService(fileProxyWithNumericConversions);
 
   const allowedGenres = movieService.getGenres();
   const moviesGetQueryValidator = getMoviesGetQueryValidator(allowedGenres);
