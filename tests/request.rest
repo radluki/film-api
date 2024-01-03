@@ -8,3 +8,8 @@ content-type: application/json
     "genres": ["Action", "Comedy"],
     "director": "Dummy Director"
 }
+
+###
+
+GET http://localhost:3000/movies?duration=1000
+Content-Type: application/json

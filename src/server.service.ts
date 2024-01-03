@@ -54,9 +54,9 @@ export class ServerService {
     const dbdata: DbData = this.fileProxy.read();
     const movies = dbdata.movies;
     if (!duration && !genres)
-      return [chooseRandomElement(movies)];
+      return getListWithRandomElement(movies);
     const durationFiltered = movies.filter(filterByDuration);
-    if (!genres) return [chooseRandomElement(durationFiltered)];
+    if (!genres) return getListWithRandomElement(durationFiltered);
     return durationFiltered.map(mapAddingPriority)
       .filter((movie) => movie.priority > 0)
       .sort((a, b) => b.priority - a.priority)
@@ -78,9 +78,10 @@ export class ServerService {
       return movie.runtime <= duration + 10 && movie.runtime >= duration - 10;
     }
 
-    function chooseRandomElement(list) {
+    function getListWithRandomElement(list) {
+      if (list.length === 0) return [];
       const randomIndex = Math.floor(Math.random() * list.length);
-      return list[randomIndex];
+      return [list[randomIndex]];
     }
   }
 }
