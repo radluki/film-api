@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import { MovieService } from '../services/movie.service';
+import { Request, Response } from 'express';
+import { IMovieService } from '../services/movie.service';
 
-export function createMoviesGetController(movieService: MovieService) {
-  return (req: Request, res: Response, next: NextFunction) => {
+export function createMoviesGetController(movieService: IMovieService) {
+  return (req: Request, res: Response) => {
     const duration = +req.query.duration;
     const genres = req.query.genres as string[];
     const body = movieService.getMovies(duration, genres);

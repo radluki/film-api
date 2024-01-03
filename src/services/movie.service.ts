@@ -3,6 +3,12 @@ import { Movie, DbData } from "../models/db.types";
 import { StatusCodes } from 'http-status-codes';
 import { CreationFailure, CreationResult, CreationSuccess } from "../utils/creation-result";
 
+export interface IMovieService {
+  getGenres(): Promise<string[]>;
+  createMovie(movie: Movie): CreationResult;
+  getMovies(duration?: number, genres?: string[]): Movie[];
+}
+
 export class MovieService {
   constructor(private readonly fileProxy: FileProxy) { }
 

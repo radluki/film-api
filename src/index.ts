@@ -1,5 +1,5 @@
 import express from 'express';
-import { MovieService } from './services/movie.service';
+import { IMovieService, MovieService } from './services/movie.service';
 import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
 import { DBPATH, PORT } from './config';
@@ -13,7 +13,7 @@ async function main() {
   const app = express();
   app.use(bodyParser.json());
   const fileProxy = new FileProxy(DBPATH);
-  const movieService = new MovieService(fileProxy);
+  const movieService: IMovieService = new MovieService(fileProxy);
 
   const allowedGenres = await movieService.getGenres();
   const moviesGetQueryValidator = getMoviesGetQueryValidator(allowedGenres);

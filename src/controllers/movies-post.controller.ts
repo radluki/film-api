@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { MovieService } from '../services/movie.service';
+import { IMovieService } from '../services/movie.service';
 import { StatusCodes } from 'http-status-codes';
 import { CreationFailure } from '../utils/creation-result';
 
-export function createMoviesPostController(movieService: MovieService) {
+export function createMoviesPostController(movieService: IMovieService) {
   return (req: Request, res: Response) => {
     const body = req.body;
     const result = movieService.createMovie(body);
