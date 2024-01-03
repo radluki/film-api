@@ -6,11 +6,11 @@ import { CreationFailure } from './utils/creation-result';
 import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
 import { StatusCodes } from 'http-status-codes';
+import { DBPATH } from './config';
 
 async function main() {
   const app = express();
-  const dbPath = './data/db.json';
-  const fileProxy = new FileProxy(dbPath);
+  const fileProxy = new FileProxy(DBPATH);
   const service = new MovieService(fileProxy);
 
   const allowedGenres = await service.getGenres();
