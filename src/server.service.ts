@@ -10,9 +10,9 @@ export class ServerService {
   async getMovies(duration?: number, genres?: string[]): Promise<any[]> {
     const dbdata = await this.fileProxy.read().then((data) => data.movies);
     if (!duration && !genres)
-      return chooseRandomElement(dbdata);
+      return [chooseRandomElement(dbdata)];
     const durationFiltered = dbdata.filter(filterByDuration);
-    if (!genres) return chooseRandomElement(durationFiltered);
+    if (!genres) return [chooseRandomElement(durationFiltered)];
     return durationFiltered.map(mapAddingPriority)
       .filter((movie) => movie.priority > 0)
       .sort((a, b) => b.priority - a.priority)

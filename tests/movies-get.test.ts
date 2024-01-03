@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { expectListOfMovies, expectObjectToBeAMovie, url } from './common';
+import { expectArrayOfMovies, expectSingleMovie, expectArrayWithSingleMovie, url } from './common';
 
 describe('/movies GET - response validation', () => {
   it('when no params should return a random movie', () => {
@@ -7,7 +7,7 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectObjectToBeAMovie(res.body);
+        expectArrayWithSingleMovie(res.body);
       });
   });
 
@@ -33,8 +33,8 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectObjectToBeAMovie(res.body);
-        expectRuntimesInBounds([res.body], 90, 110);
+        expectArrayWithSingleMovie(res.body);
+        expectRuntimesInBounds(res.body, 90, 110);
       });
   });
 
@@ -43,8 +43,8 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectObjectToBeAMovie(res.body);
-        expectRuntimesInBounds([res.body], 105, 125);
+        expectArrayWithSingleMovie(res.body);
+        expectRuntimesInBounds(res.body, 105, 125);
       });
   });
 
@@ -53,7 +53,7 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectListOfMovies(res.body);
+        expectArrayOfMovies(res.body);
         expectRuntimesInBounds(res.body, 105, 125);
         expectMoviesToHaveSpecifiedGenres(res.body, ['Animation']);
       });
@@ -64,7 +64,7 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectListOfMovies(res.body);
+        expectArrayOfMovies(res.body);
         const moviesShorterThan105 = res.body.filter((movie) => movie.runtime < 105);
         expect(moviesShorterThan105.length).toBeGreaterThan(0);
         expectMoviesToHaveSpecifiedGenres(res.body, ['Animation']);
@@ -91,7 +91,7 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectListOfMovies(res.body);
+        expectArrayOfMovies(res.body);
         const moviesShorterThan105 = res.body.filter((movie) => movie.runtime < 105);
         expect(moviesShorterThan105.length).toBeGreaterThan(0);
         const genres = ['Animation', 'Comedy', 'Thriller'];
@@ -105,7 +105,7 @@ describe('/movies GET - response validation', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
-        expectListOfMovies(res.body);
+        expectArrayOfMovies(res.body);
         expectRuntimesInBounds(res.body, 110, 130);
         const genres = ['Animation', 'Comedy', 'Thriller'];
         expectMoviesToHaveSpecifiedGenres(res.body, genres);

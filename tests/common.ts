@@ -1,6 +1,13 @@
 export const url = 'http://localhost:3000';
 
-export const expectObjectToBeAMovie = (obj: any) => {
+export const expectArrayWithSingleMovie = (list: any) => {
+  expect(list).toEqual(expect.any(Array));
+  expect(list.length).toBe(1);
+  const obj = list[0];
+  expectSingleMovie(obj);
+}
+
+export const expectSingleMovie = (obj: any) => {
   expect(obj).toHaveProperty('id');
   expect(obj).toHaveProperty('title');
   expect(obj).toHaveProperty('year');
@@ -21,8 +28,8 @@ export const expectObjectToBeAMovie = (obj: any) => {
   if (obj.posterUrl) expect(obj.posterUrl).toEqual(expect.any(String));
 }
 
-export const expectListOfMovies = (list: any) => {
+export const expectArrayOfMovies = (list: any) => {
   expect(list).toEqual(expect.any(Array));
-  expect(list.length).toBeGreaterThan(0);
-  list.forEach(expectObjectToBeAMovie);
+  expect(list.length).toBeGreaterThan(1);
+  list.forEach(expectSingleMovie);
 }
