@@ -27,7 +27,7 @@ function main() {
   app.get(MOVIES_URL, moviesGetQueryValidator, moviesGetController);
   app.post(MOVIES_URL, moviesPostBodyValidator, moviesPostController);
   app.use(errorHandler); // Should be the last to overwite the default error handler
-  app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Movie Server is running on http://localhost:${PORT}`));
 }
 
 main();
