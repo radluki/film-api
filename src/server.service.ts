@@ -12,7 +12,7 @@ export class ServerService {
     if (!duration && !genres)
       return chooseRandomElement(dbdata);
     const durationFiltered = dbdata.filter(filterByDuration);
-    if (!genres) return durationFiltered;
+    if (!genres) return chooseRandomElement(durationFiltered);
     return durationFiltered.map(mapAddingPriority)
       .filter((movie) => movie.priority > 0)
       .sort((a, b) => b.priority - a.priority)

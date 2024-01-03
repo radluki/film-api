@@ -32,24 +32,18 @@ it('/movies GET - should return a random movie with duration=100', () => {
     .expect(200)
     .expect('Content-Type', /json/)
     .expect((res) => {
-      expectListOfMovies(res.body);
-      expectRuntimesInBounds(res.body, 90, 110);
+      expectObjectToBeAMovie(res.body);
+      expectRuntimesInBounds([res.body], 90, 110);
     });
 });
-
-function expectAtLeastOneMovieWithoutGenre(movies: any[], genreX: string) {
-  const moviesWithoutGenreX = movies.filter((movie) => !movie.genres.includes(genreX));
-  expect(moviesWithoutGenreX.length).toBeGreaterThan(0);
-}
 
 it('/movies GET - should return a random movie with duration=115', () => {
   return request(url).get('/movies?duration=115')
     .expect(200)
     .expect('Content-Type', /json/)
     .expect((res) => {
-      expectListOfMovies(res.body);
-      expectRuntimesInBounds(res.body, 105, 125);
-      expectAtLeastOneMovieWithoutGenre(res.body, 'Animation');
+      expectObjectToBeAMovie(res.body);
+      expectRuntimesInBounds([res.body], 105, 125);
     });
 });
 
