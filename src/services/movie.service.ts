@@ -1,4 +1,4 @@
-import { FileProxy } from "../utils/file-proxy";
+import { IFileProxy } from "../utils/file-proxy";
 import { Movie, DbData } from "../models/db.types";
 import { StatusCodes } from 'http-status-codes';
 import { CreationFailure, CreationResult, CreationSuccess } from "../utils/creation-result";
@@ -9,8 +9,8 @@ export interface IMovieService {
   getMovies(duration?: number, genres?: string[]): Movie[];
 }
 
-export class MovieService {
-  constructor(private readonly fileProxy: FileProxy) { }
+export class MovieService implements IMovieService {
+  constructor(private readonly fileProxy: IFileProxy) { }
 
   async getGenres(): Promise<string[]> {
     return this.fileProxy.read().genres;

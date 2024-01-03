@@ -1,6 +1,11 @@
 import { readFileSync, writeFileSync } from 'fs';
 
-export class FileProxy {
+export interface IFileProxy {
+  read(): any;
+  write(data: any);
+}
+
+export class FileProxy implements IFileProxy {
   constructor(
     private readonly filename: string) { }
 
