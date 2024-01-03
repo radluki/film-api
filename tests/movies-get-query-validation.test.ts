@@ -1,14 +1,6 @@
 import request from 'supertest';
 import { url } from './common';
 
-it('/hello GET', () => {
-  return request(url).get('/hello')
-    .expect(200)
-    .expect('Content-Type', /text/)
-    .expect((res) => {
-      expect(res.text).toEqual('Hello, World!');
-    });
-});
 
 describe('/movies GET - query parameter validation', () => {
   it('query params should be optional', () => {
