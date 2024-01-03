@@ -47,4 +47,19 @@ describe('POST /movies - logic', () => {
     const idWasInDbBeforeAddition = dbContent.movies.some((movie) => movie.id === id);
     expect(idWasInDbBeforeAddition).toBeFalsy();
   });
+
+  it('should reject an attempt to add the same movie twice', async () => {
+    const postResp = await request(url).post('/movies')
+      .send(movie);
+    expect(postResp.statusCode).toBe(201);
+    expect(postResp.body.id).toBeDefined();
+    const id = postResp.body.id;
+    expect(id).toBeGreaterThan(0);
+    expect(postResp.body.message).toEqual('Movie created');
+
+    const postResp2 = await request(url).post('/movies')
+      .send(movie);
+    expect(postResp2.statusCode).toBe(409);
+    expect(postResp2.body.errors).toEqual(['Title "Beetlejuice 2" already exists']);
+  });
 });
