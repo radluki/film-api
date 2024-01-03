@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 import { getArrayFieldsValidator, splitStringToArray, validate } from './middleware/validation-utils';
 import { body, query } from 'express-validator';
-import { CreationFailure, ServerService } from './server.service';
-import { FileProxy } from './file-proxy';
+import { ServerService } from './server.service';
+import { CreationFailure } from './utils/creation-result';
+import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
 import { StatusCodes } from 'http-status-codes';
 

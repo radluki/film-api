@@ -1,45 +1,25 @@
-import { FileProxy } from "./file-proxy";
+import { FileProxy } from "./utils/file-proxy";
 import { Movie, DbData } from "./models/db.types";
 import { StatusCodes } from 'http-status-codes';
-
-export class CreationSuccess {
-  id: number;
-  message: string;
-
-  constructor(status: number, error: string) {
-    this.id = status;
-    this.message = error;
-  }
-}
-
-export class CreationFailure {
-  status: number;
-  error: string;
-
-  constructor(status: number, error: string) {
-    this.status = status;
-    this.error = error;
-  }
-}
-
-type CreationResult = CreationSuccess | CreationFailure;
+import { CreationFailure, CreationResult, CreationSuccess } from "./utils/creation-result";
 
 export class ServerService {
   constructor(private readonly fileProxy: FileProxy) { }
 
   async getGenres(): Promise<string[]> {
-    const dbdata: DbData = this.fileProxy.read();
-    return dbdata.genres;
+    return this.fileProxy.read().genres;
   }
 
   async createMovie(movie: Movie): Promise<CreationResult> {
-    const dbdata: DbData = await this.fileProxy.read();
+    const dbdata: DbData = this.fileProxy.read();
     if (isTitleDuplicated(movie.title, dbdata.movies))
       return new CreationFailure(StatusCodes.CONFLICT,
         `Title "${movie.title}" already exists`);
+
     const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
     dbdata.movies.push(newMovie);
-    await this.fileProxy.write(dbdata);
+    this.fileProxy.write(dbdata);
+
     return new CreationSuccess(newMovie.id, 'Movie created');
 
     function generateNewId(movies: Movie[]) {
@@ -51,16 +31,17 @@ export class ServerService {
   }
 
   async getMovies(duration?: number, genres?: string[]): Promise<Movie[]> {
-    const dbdata: DbData = this.fileProxy.read();
-    const movies = dbdata.movies;
-    if (!duration && !genres)
+    const movies = this.fileProxy.read().movies.filter(filterByDuration);
+    if (!genres)
       return getListWithRandomElement(movies);
-    const durationFiltered = movies.filter(filterByDuration);
-    if (!genres) return getListWithRandomElement(durationFiltered);
-    return durationFiltered.map(mapAddingPriority)
-      .filter((movie) => movie.priority > 0)
-      .sort((a, b) => b.priority - a.priority)
-      .map(mapRemovingPriority);
+    return filterAndSortByMatchingGenres(movies);
+
+    function filterAndSortByMatchingGenres(movies: Movie[]) {
+      return movies.map(mapAddingPriority)
+        .filter((movie) => movie.priority > 0)
+        .sort((a, b) => b.priority - a.priority)
+        .map(mapRemovingPriority);
+    }
 
     function mapAddingPriority(movie) {
       movie.priority = movie.genres.filter((genre) => genres.includes(genre)).length;
