@@ -18,6 +18,7 @@ export class MovieService implements IMovieService {
 
   createMovie(movie: Movie): CreationResult {
     const dbdata: DbData = this.fileProxy.read();
+    if (!dbdata.movies) dbdata.movies = [];
     if (isTitleDuplicated(movie.title, dbdata.movies))
       return new CreationFailure(StatusCodes.CONFLICT,
         `Title "${movie.title}" already exists`);

@@ -1,5 +1,6 @@
+import { Movie } from "../src/models/db.types";
 
-export const movie = {
+export const movie: Movie = {
   title: "Beetlejuice 2",
   year: "1988",
   runtime: "1000",
@@ -10,7 +11,6 @@ export const movie = {
   director: "Tim Burton",
   posterUrl: "https://dummy.jpg",
   actors: "Johnny Depp, Winona Ryder, Dianne Wiest, Anthony Michael Hall",
-  plot: "A couple of recently deceased ghosts contract the services of a \"bio-exorcist\" in order to remove the obnoxious new owners of their house.",
 };
 
 export const dbPath = './data/db.json';
