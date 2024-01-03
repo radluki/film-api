@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { readDbContent, url, writeDbContent } from './common';
-import { DbData } from '../src/db.types';
+import { DbData } from '../src/models/db.types';
 import { movie, dbPath } from './test-data';
 
 let dbContent: DbData;

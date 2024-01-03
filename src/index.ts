@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { getArrayFieldsValidator, splitStringToArray, validate } from './validation.middleware';
+import { getArrayFieldsValidator, splitStringToArray, validate } from './middleware/validation.middleware';
 import { body, query } from 'express-validator';
 import { CreationFailure, ServerService } from './server.service';
 import { FileProxy } from './file-proxy';

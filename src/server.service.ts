@@ -1,5 +1,5 @@
 import { FileProxy } from "./file-proxy";
-import { Movie, DbData } from "./db.types";
+import { Movie, DbData } from "./models/db.types";
 import { StatusCodes } from 'http-status-codes';
 
 export class CreationSuccess {
