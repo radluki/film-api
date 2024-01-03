@@ -1,15 +1,17 @@
 import { FileProxy } from "./file-proxy";
 import fs from 'fs/promises';
 
-const readOnlyTestFile = './data/test-db.json';
-const readWriteTestFile = './data/test-db-write.json';
+const dbfile = './data/test-db.json';
 
-const sut = new FileProxy(readOnlyTestFile);
-const sutWrite = new FileProxy(readWriteTestFile);
+const sut = new FileProxy(dbfile);
 
 beforeEach(async () => {
   jest.clearAllMocks();
-  await fs.writeFile(readWriteTestFile, '');
+  await fs.writeFile(dbfile, '');
+});
+
+afterEach(async () => {
+  await fs.rm(dbfile);
 });
 
 it('read on invalid path should throw', async () => {
@@ -18,12 +20,15 @@ it('read on invalid path should throw', async () => {
 });
 
 it('write should save data as json', async () => {
-  const initialFileContent = await fs.readFile(readWriteTestFile);
+  const initialFileContent = await fs.readFile(dbfile);
   expect(initialFileContent.toString()).toEqual('');
 
   const data = { data: 'test' };
-  sutWrite.write(data);
+  sut.write(data);
 
-  const fileContent = await fs.readFile(readWriteTestFile);
+  const fileContent = await fs.readFile(dbfile);
   expect(JSON.parse(fileContent.toString())).toEqual(data);
+
+  const readData = sut.read();
+  expect(readData).toEqual(data);
 });
