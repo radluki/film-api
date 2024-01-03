@@ -1,9 +1,9 @@
-import { FileProxy } from "./utils/file-proxy";
-import { Movie, DbData } from "./models/db.types";
+import { FileProxy } from "../utils/file-proxy";
+import { Movie, DbData } from "../models/db.types";
 import { StatusCodes } from 'http-status-codes';
-import { CreationFailure, CreationResult, CreationSuccess } from "./utils/creation-result";
+import { CreationFailure, CreationResult, CreationSuccess } from "../utils/creation-result";
 
-export class ServerService {
+export class MovieService {
   constructor(private readonly fileProxy: FileProxy) { }
 
   async getGenres(): Promise<string[]> {

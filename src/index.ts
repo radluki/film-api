@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { getArrayFieldsValidator, splitStringToArray, validate } from './middleware/validation-utils';
 import { body, query } from 'express-validator';
-import { ServerService } from './server.service';
+import { MovieService } from './services/movie.service';
 import { CreationFailure } from './utils/creation-result';
 import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
@@ -11,7 +11,7 @@ async function main() {
   const app = express();
   const dbPath = './data/db.json';
   const fileProxy = new FileProxy(dbPath);
-  const service = new ServerService(fileProxy);
+  const service = new MovieService(fileProxy);
 
   const allowedGenres = await service.getGenres();
   const allowedGenresValidator = getArrayFieldsValidator(allowedGenres);
