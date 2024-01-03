@@ -1,7 +1,7 @@
-import { IFileProxy } from "../utils/file-proxy";
 import { Movie, DbData } from "../models/db.types";
 import { StatusCodes } from 'http-status-codes';
 import { CreationFailure, CreationResult, CreationSuccess } from "../utils/creation-result";
+import { IDbProxy } from "../utils/file-proxy-decorator";
 
 export interface IMovieService {
   getGenres(): string[];
@@ -10,14 +10,14 @@ export interface IMovieService {
 }
 
 export class MovieService implements IMovieService {
-  constructor(private readonly fileProxy: IFileProxy) { }
+  constructor(private readonly dbProxy: IDbProxy) { }
 
   getGenres(): string[] {
-    return this.fileProxy.read()?.genres || [];
+    return this.dbProxy.read()?.genres || [];
   }
 
   createMovie(movie: Movie): CreationResult {
-    const dbdata: DbData = this.fileProxy.read();
+    const dbdata: DbData = this.dbProxy.read();
     if (!dbdata.movies) dbdata.movies = [];
     if (isTitleDuplicated(movie.title, dbdata.movies))
       return new CreationFailure(StatusCodes.CONFLICT,
@@ -25,7 +25,7 @@ export class MovieService implements IMovieService {
 
     const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
     dbdata.movies.push(newMovie);
-    this.fileProxy.write(dbdata);
+    this.dbProxy.write(dbdata);
 
     return new CreationSuccess(newMovie.id, 'Movie created');
 
@@ -38,7 +38,7 @@ export class MovieService implements IMovieService {
   }
 
   getMovies(duration?: number, genres?: string[]): Movie[] {
-    const dbdata = this.fileProxy.read();
+    const dbdata = this.dbProxy.read();
     if (!dbdata || !dbdata.movies) return [];
     const movies = dbdata.movies.filter(filterByDuration);
     if (!genres)
