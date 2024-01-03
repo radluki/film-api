@@ -4,9 +4,9 @@ import { StatusCodes } from 'http-status-codes';
 import { CreationFailure } from '../utils/creation-result';
 
 export function createMoviesPostController(movieService: MovieService) {
-  return async (req: Request, res: Response) => {
+  return (req: Request, res: Response) => {
     const body = req.body;
-    const result = await movieService.createMovie(body);
+    const result = movieService.createMovie(body);
     if (result instanceof CreationFailure) {
       res.status(result.status).json({ errors: [result.error] });
       return;

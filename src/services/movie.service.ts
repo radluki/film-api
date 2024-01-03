@@ -10,7 +10,7 @@ export class MovieService {
     return this.fileProxy.read().genres;
   }
 
-  async createMovie(movie: Movie): Promise<CreationResult> {
+  createMovie(movie: Movie): CreationResult {
     const dbdata: DbData = this.fileProxy.read();
     if (isTitleDuplicated(movie.title, dbdata.movies))
       return new CreationFailure(StatusCodes.CONFLICT,
@@ -30,7 +30,7 @@ export class MovieService {
     }
   }
 
-  async getMovies(duration?: number, genres?: string[]): Promise<Movie[]> {
+  getMovies(duration?: number, genres?: string[]): Movie[] {
     const movies = this.fileProxy.read().movies.filter(filterByDuration);
     if (!genres)
       return getListWithRandomElement(movies);
