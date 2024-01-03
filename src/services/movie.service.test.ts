@@ -74,3 +74,15 @@ it('getMovies when genres set and duration set', () => {
   const movies = sut.getMovies(100, ['Action', 'Comedy']);
   expect(movies).toEqual([movie1, movie3, movie6])
 })
+
+it('getGenres no genres', () => {
+  fileProxyMock.read.mockReturnValueOnce({});
+  const genres = sut.getGenres();
+  expect(genres).toEqual([])
+});
+
+it('getGenres when file read returns null', () => {
+  fileProxyMock.read.mockReturnValueOnce(null);
+  const genres = sut.getGenres();
+  expect(genres).toEqual([])
+});

@@ -9,13 +9,13 @@ import { createMoviesGetController } from './controllers/movies-get.controller';
 import { createMoviesPostController } from './controllers/movies-post.controller';
 import { errorHandler } from './middleware/error-handler';
 
-async function main() {
+function main() {
   const app = express();
   app.use(bodyParser.json());
   const fileProxy = new FileProxy(DBPATH);
   const movieService: IMovieService = new MovieService(fileProxy);
 
-  const allowedGenres = await movieService.getGenres();
+  const allowedGenres = movieService.getGenres();
   const moviesGetQueryValidator = getMoviesGetQueryValidator(allowedGenres);
   const moviesPostBodyValidator = getMoviesPostBodyValidator(allowedGenres);
   const moviesGetController = createMoviesGetController(movieService);
@@ -28,4 +28,4 @@ async function main() {
   app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
 }
 
-main().catch((err) => console.error(err));
+main();

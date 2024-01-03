@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { CreationFailure, CreationResult, CreationSuccess } from "../utils/creation-result";
 
 export interface IMovieService {
-  getGenres(): Promise<string[]>;
+  getGenres(): string[];
   createMovie(movie: Movie): CreationResult;
   getMovies(duration?: number, genres?: string[]): Movie[];
 }
@@ -12,8 +12,8 @@ export interface IMovieService {
 export class MovieService implements IMovieService {
   constructor(private readonly fileProxy: IFileProxy) { }
 
-  async getGenres(): Promise<string[]> {
-    return this.fileProxy.read().genres;
+  getGenres(): string[] {
+    return this.fileProxy.read()?.genres || [];
   }
 
   createMovie(movie: Movie): CreationResult {
