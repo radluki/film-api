@@ -6,22 +6,20 @@ import { CreationFailure } from './utils/creation-result';
 import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
 import { StatusCodes } from 'http-status-codes';
-import { DBPATH } from './config';
+import { DBPATH, PORT } from './config';
 
 async function main() {
   const app = express();
+  app.use(bodyParser.json());
   const fileProxy = new FileProxy(DBPATH);
   const service = new MovieService(fileProxy);
-
-  const allowedGenres = await service.getGenres();
-  const allowedGenresValidator = getArrayFieldsValidator(allowedGenres);
-
-  app.use(bodyParser.json());
 
   app.get('/hello', (req: Request, res: Response) => {
     res.send('Hello, World!');
   });
 
+  const allowedGenres = await service.getGenres();
+  const allowedGenresValidator = getArrayFieldsValidator(allowedGenres);
   const valdateMoviesGetQuery = validate([
     query('duration').optional().isNumeric().withMessage('Duration must be a number'),
     query('genres')
@@ -75,10 +73,8 @@ async function main() {
     res.status(StatusCodes.CREATED).json(result);
   });
 
-  const port = 3000;
-
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
 }
 
