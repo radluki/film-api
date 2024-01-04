@@ -10,18 +10,19 @@ export class NumericConversionsFileProxyDecorator implements IDbProxy {
   constructor(private readonly fileProxy: IFileProxy) {}
 
   read(): DbData {
-    const data = this.fileProxy.read();
+    const data = this.fileProxy.read() as DbData;
     if (!data) return { movies: [], genres: [] };
     if (!data.movies) data.movies = [];
     if (!data.genres) data.genres = [];
     data.movies.forEach((movie) => {
-      movie.year = parseInt(movie.year);
-      movie.runtime = parseInt(movie.runtime);
+      movie.year = parseInt(movie.year.toString());
+      movie.runtime = parseInt(movie.runtime.toString());
     });
     return data;
   }
 
   write(data: DbData) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data.movies.forEach((movie: any) => {
       movie.year = movie.year.toString();
       movie.runtime = movie.runtime.toString();

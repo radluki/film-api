@@ -13,7 +13,7 @@ function loadGenres(dbpath): string[] {
   console.log(`Loading genres from ${dbpath}`);
   dbpath = path.resolve(dbpath);
   console.log(`dbpath resolved to ${dbpath}`);
-  const { genres } = require(dbpath);
+  const { genres } = require(dbpath); // eslint-disable-line
   console.log(`Loaded genres:`, genres);
   return genres || [];
 }

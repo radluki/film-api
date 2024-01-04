@@ -1,6 +1,7 @@
 import { IFileProxy } from "./file-proxy";
 import { NumericConversionsFileProxyDecorator } from "./file-proxy-decorator";
 import { movie } from "../../tests/test-data";
+import { DbData } from "../models/db.types";
 
 const fileProxyMock = {
   read: jest.fn(),
@@ -55,6 +56,6 @@ it("write should stringify runtime and year", () => {
 });
 
 it("write may throw when data is invalid DbData", () => {
-  const data: any = {};
+  const data: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
   expect(() => sut.write(data)).toThrow("Cannot read properties of undefined");
 });

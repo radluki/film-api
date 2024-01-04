@@ -123,7 +123,7 @@ it("createMovie when title is duplicated should fail", () => {
   dbProxyMock.read.mockReturnValueOnce({
     movies: [movie1, movie2],
   });
-  let newMovie = { ...movie, title: "title2" };
+  const newMovie = { ...movie, title: "title2" };
   const result = sut.createMovie(newMovie);
   expect(result).toEqual(
     new MovieCreationResult(409, {
@@ -142,7 +142,7 @@ it("createMovie when title is unique should succeed", () => {
   };
   const id = 23;
   dbProxyMock.read.mockReturnValueOnce(dbdata);
-  let newMovie = { ...movie, title: "title3" };
+  const newMovie = { ...movie, title: "title3" };
   const result = sut.createMovie(newMovie);
   expect(result).toEqual(
     new MovieCreationResult(201, { id, message: movieCreatedMessage }),
@@ -161,7 +161,7 @@ it("createMovie when movies is an empty array", () => {
   };
   const id = 1;
   dbProxyMock.read.mockReturnValueOnce(dbdata);
-  let newMovie = { ...movie, title: "title3" };
+  const newMovie = { ...movie, title: "title3" };
   const result = sut.createMovie(newMovie);
   expect(result).toEqual(
     new MovieCreationResult(201, { id, message: movieCreatedMessage }),
@@ -180,7 +180,7 @@ it("createMovie when movies field is null", () => {
   };
   const id = 1;
   dbProxyMock.read.mockReturnValueOnce(dbdata);
-  let newMovie = { ...movie, title: "title3" };
+  const newMovie = { ...movie, title: "title3" };
   const result = sut.createMovie(newMovie);
   expect(result).toEqual(
     new MovieCreationResult(201, { id, message: movieCreatedMessage }),
@@ -197,7 +197,7 @@ it("createMovie when movies field is undefined", () => {
   const dbdata = {};
   const id = 1;
   dbProxyMock.read.mockReturnValueOnce(dbdata);
-  let newMovie = { ...movie, title: "title3" };
+  const newMovie = { ...movie, title: "title3" };
   const result = sut.createMovie(newMovie);
   expect(result).toEqual(
     new MovieCreationResult(201, { id, message: movieCreatedMessage }),

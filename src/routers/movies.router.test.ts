@@ -13,7 +13,6 @@ const movieServiceMock = {
 const GENRE1 = "genre1";
 const GENRE2 = "genre2";
 const GENRE3 = "genre3";
-const GENRE4 = "genre4";
 const GENRE_INVALID = "genre_invalid";
 
 const movie: Movie = {
