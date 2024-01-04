@@ -113,6 +113,7 @@ describe('movies router GET /', () => {
 
   it('get / should return 500 when service throws', () => {
     jest.resetAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     movieServiceMock.getMovies.mockImplementation(() => { throw new Error('XXX'); });
     return request(app).get('/').expect(500).expect((res) => {
       expect(res.body).toEqual({ error: 'XXX', message: 'Internal Server Error' });
@@ -261,6 +262,7 @@ describe('movies router POST /', () => {
 
   it('post / should return 500 when service throws', () => {
     jest.resetAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     movieServiceMock.createMovie.mockImplementation(() => { throw new Error('XXX'); });
     return request(app).post('/').send(movie).expect(500).expect((res) => {
       expect(res.body).toEqual({ error: 'XXX', message: 'Internal Server Error' });
