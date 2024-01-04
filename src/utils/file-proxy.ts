@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "fs";
 
 export interface IFileProxy {
   read(): unknown;
-  write(data: unknown);
+  write(data: unknown): void;
 }
 
 export class FileProxy implements IFileProxy {

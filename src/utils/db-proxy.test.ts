@@ -1,12 +1,12 @@
 import { IFileProxy } from "./file-proxy";
-import { NumericConversionsFileProxyDecorator } from "./file-proxy-decorator";
+import { DbProxyValidatingAdapter } from "./db-proxy";
 import { movie } from "../../tests/test-data";
 
 const fileProxyMock = {
   read: jest.fn(),
   write: jest.fn(),
 };
-const sut = new NumericConversionsFileProxyDecorator(<IFileProxy>fileProxyMock);
+const sut = new DbProxyValidatingAdapter(<IFileProxy>fileProxyMock);
 
 beforeEach(() => {
   jest.clearAllMocks();

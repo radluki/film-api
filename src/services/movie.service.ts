@@ -1,6 +1,6 @@
 import { Movie, DbData } from "../models/db.types";
 import { StatusCodes } from "http-status-codes";
-import { IDbProxy } from "../utils/file-proxy-decorator";
+import { IDbProxy } from "../utils/db-proxy";
 
 export interface IMovieService {
   getGenres(): string[];

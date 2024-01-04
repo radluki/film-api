@@ -7,7 +7,7 @@ export interface IDbProxy {
   write(data: DbData): void;
 }
 
-export class NumericConversionsFileProxyDecorator implements IDbProxy {
+export class DbProxyValidatingAdapter implements IDbProxy {
   constructor(private readonly fileProxy: IFileProxy) {}
 
   read(): DbData {

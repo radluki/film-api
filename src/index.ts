@@ -2,13 +2,13 @@ import express from "express";
 import { IMovieService, MovieService } from "./services/movie.service";
 import { FileProxy } from "./utils/file-proxy";
 import { DBPATH, PORT } from "./config";
-import { NumericConversionsFileProxyDecorator } from "./utils/file-proxy-decorator";
+import { DbProxyValidatingAdapter } from "./utils/db-proxy";
 import { createMoviesRouter } from "./routers/movies.router";
 import { healthckeckController } from "./controllers/healthcheck.controller";
 
 const fileProxy = new FileProxy(DBPATH);
 const fileProxyWithNumericConversions =
-  new NumericConversionsFileProxyDecorator(fileProxy);
+  new DbProxyValidatingAdapter(fileProxy);
 const movieService: IMovieService = new MovieService(
   fileProxyWithNumericConversions,
 );

@@ -1,6 +1,6 @@
 import { MovieService } from "./movie.service";
 import { movie } from "../../tests/test-data";
-import { IDbProxy } from "../utils/file-proxy-decorator";
+import { IDbProxy } from "../utils/db-proxy";
 import { MovieCreationResult } from "./movie.service";
 
 const dbProxyMock = {
