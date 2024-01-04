@@ -12,7 +12,7 @@
     "healthcheck": "ts-node ./scripts/healthcheck.ts",
     "test:ut": "jest --rootDir src",
     "test:ut:watch": "jest --watch --rootDir src",
-    "test": "npm run healthcheck && jest -- get && jest --runInBand -- post error",
+    "test": "npm run healthcheck && jest --runInBand",
     "test:watch": "npm run healthcheck && jest --watch --runInBand"
   },
   "author": "",
