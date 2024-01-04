@@ -14,11 +14,41 @@ jest.mock('../config', () => ({
   DBPATH: 'dbpath',
 }));
   
-
 const app = express();
 app.use(express.json());
 app.use('/', createMoviesRouter(<IMovieService>movieServiceMock));
 
-it('dummy', () => {
-  expect(1).toBe(1);
+const serviceResult = ['xd'];
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  movieServiceMock.getMovies.mockReturnValueOnce(serviceResult);
+});
+
+it('should respond with service result', () => {
+  return request(app).get('/').expect(200).expect(serviceResult);
+});
+
+it('should call service with query params', () => {
+  const query = { duration: 10, genres: ['genre1'] };
+  return request(app).get('/').query(query).expect(200).expect((res) => {
+    expect(res.body).toEqual(serviceResult);
+    expect(movieServiceMock.getMovies).toHaveBeenCalledWith(query.duration, query.genres);
+  });
+});
+
+it('should call service with duration', () => {
+  const query = { duration: 10 };
+  return request(app).get('/').query(query).expect(200).expect((res) => {
+    expect(res.body).toEqual(serviceResult);
+    expect(movieServiceMock.getMovies).toHaveBeenCalledWith(query.duration, undefined);
+  });
+});
+
+it('should call service with genres', () => {
+  const query = { genres: ['genre1'] };
+  return request(app).get('/').query(query).expect(200).expect((res) => {
+    expect(res.body).toEqual(serviceResult);
+    expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, query.genres);
+  });
 });
