@@ -1,7 +1,7 @@
 import { MovieService } from "./movie.service"
 import { movie } from "../../tests/test-data";
-import { CreationFailure, CreationSuccess } from "../utils/creation-result";
 import { IDbProxy } from "../utils/file-proxy-decorator";
+import { MovieCreationResult } from "./movie.service";
 
 const dbProxyMock = {
   read: jest.fn(),
@@ -97,6 +97,11 @@ it('getGenres when db read returns an array', () => {
   expect(result).toEqual(genres)
 });
 
+const movieCreatedMessage = 'Movie created';
+function getTitleAlreadyExistsMessage(title: string) {
+  return `Title "${title}" already exists`;
+}
+
 it('createMovie when title is duplicated should fail', () => {
   const movie1 = { ...movie, id: 1, title: 'title1' };
   const movie2 = { ...movie, id: 2, title: 'title2' };
@@ -105,7 +110,7 @@ it('createMovie when title is duplicated should fail', () => {
   });
   let newMovie = { ...movie, title: 'title2' };
   const result = sut.createMovie(newMovie);
-  expect(result).toEqual(new CreationFailure(409, `Title "${newMovie.title}" already exists`));
+  expect(result).toEqual(new MovieCreationResult(409, { error: getTitleAlreadyExistsMessage(newMovie.title) }));
 
   expect(dbProxyMock.write).toHaveBeenCalledTimes(0);
 });
@@ -120,7 +125,7 @@ it('createMovie when title is unique should succeed', () => {
   dbProxyMock.read.mockReturnValueOnce(dbdata);
   let newMovie = { ...movie, title: 'title3' };
   const result = sut.createMovie(newMovie);
-  expect(result).toEqual(new CreationSuccess(id, 'Movie created'));
+  expect(result).toEqual(new MovieCreationResult(201, { id, message: movieCreatedMessage }));
 
   expect(dbProxyMock.write).toHaveBeenCalledTimes(1);
   const updatedDbData = {
@@ -137,7 +142,7 @@ it('createMovie when movies is an empty array', () => {
   dbProxyMock.read.mockReturnValueOnce(dbdata);
   let newMovie = { ...movie, title: 'title3' };
   const result = sut.createMovie(newMovie);
-  expect(result).toEqual(new CreationSuccess(id, 'Movie created'));
+  expect(result).toEqual(new MovieCreationResult(201, { id, message: movieCreatedMessage }));
 
   expect(dbProxyMock.write).toHaveBeenCalledTimes(1);
   const updatedDbData = {
@@ -154,7 +159,7 @@ it('createMovie when movies field is null', () => {
   dbProxyMock.read.mockReturnValueOnce(dbdata);
   let newMovie = { ...movie, title: 'title3' };
   const result = sut.createMovie(newMovie);
-  expect(result).toEqual(new CreationSuccess(id, 'Movie created'));
+  expect(result).toEqual(new MovieCreationResult(201, { id, message: movieCreatedMessage }));
 
   expect(dbProxyMock.write).toHaveBeenCalledTimes(1);
   const updatedDbData = {
@@ -169,7 +174,7 @@ it('createMovie when movies field is undefined', () => {
   dbProxyMock.read.mockReturnValueOnce(dbdata);
   let newMovie = { ...movie, title: 'title3' };
   const result = sut.createMovie(newMovie);
-  expect(result).toEqual(new CreationSuccess(id, 'Movie created'));
+  expect(result).toEqual(new MovieCreationResult(201, { id, message: movieCreatedMessage }));
 
   expect(dbProxyMock.write).toHaveBeenCalledTimes(1);
   const updatedDbData = {

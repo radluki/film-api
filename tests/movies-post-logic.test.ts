@@ -66,6 +66,6 @@ describe('POST /movies - logic', () => {
     const postResp2 = await request(url).post('/movies')
       .send(movie);
     expect(postResp2.statusCode).toBe(409);
-    expect(postResp2.body.errors).toEqual(['Title "Beetlejuice 2" already exists']);
+    expect(postResp2.body.error).toEqual('Title "Beetlejuice 2" already exists');
   });
 });

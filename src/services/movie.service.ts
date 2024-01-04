@@ -1,12 +1,15 @@
 import { Movie, DbData } from "../models/db.types";
 import { StatusCodes } from 'http-status-codes';
-import { CreationFailure, CreationResult, CreationSuccess } from "../utils/creation-result";
 import { IDbProxy } from "../utils/file-proxy-decorator";
 
 export interface IMovieService {
   getGenres(): string[];
-  createMovie(movie: Movie): CreationResult;
+  createMovie(movie: Movie): MovieCreationResult;
   getMovies(duration?: number, genres?: string[]): Movie[];
+}
+
+export class MovieCreationResult {
+  constructor(readonly status: number, readonly message: { id?: number, error?: string, message?: string }) { }
 }
 
 export class MovieService implements IMovieService {
@@ -16,18 +19,18 @@ export class MovieService implements IMovieService {
     return this.dbProxy.read()?.genres || [];
   }
 
-  createMovie(movie: Movie): CreationResult {
+  createMovie(movie: Movie): MovieCreationResult {
     const dbdata: DbData = this.dbProxy.read();
     if (!dbdata.movies) dbdata.movies = [];
     if (isTitleDuplicated(movie.title, dbdata.movies))
-      return new CreationFailure(StatusCodes.CONFLICT,
-        `Title "${movie.title}" already exists`);
+      return new MovieCreationResult(StatusCodes.CONFLICT,
+        { error: `Title "${movie.title}" already exists` });
 
     const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
     dbdata.movies.push(newMovie);
     this.dbProxy.write(dbdata);
 
-    return new CreationSuccess(newMovie.id, 'Movie created');
+    return new MovieCreationResult(StatusCodes.CREATED, { id: newMovie.id, message: 'Movie created' });
 
     function generateNewId(movies: Movie[]) {
       return movies.reduce((maxId, movie) => Math.max(maxId, movie.id), 0) + 1;
