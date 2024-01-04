@@ -4,7 +4,7 @@ import fs from 'fs';
 dotenv.config();
 validateConfig();
 
-export const DBPATH: string = process.env.DBPATH;
+export const { DBPATH } = process.env;
 export const PORT: number = +process.env.PORT || 3000;
 export const GENRES: string[] = loadGenres(DBPATH);
 
