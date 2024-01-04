@@ -9,9 +9,9 @@
     "start": "tsc && node ./dist/src/index.js",
     "healthcheck": "ts-node ./scripts/healthcheck.ts",
     "test:ut": "jest --rootDir src",
-    "test:ut:watch": "npm run healthcheck && jest --watch --rootDir src",
+    "test:ut:watch": "jest --watch --rootDir src",
     "test": "npm run healthcheck && jest -- get && jest --runInBand -- post error",
-    "test:watch": "jest --watch --runInBand"
+    "test:watch": "npm run healthcheck && jest --watch --runInBand"
   },
   "author": "",
   "license": "ISC",
