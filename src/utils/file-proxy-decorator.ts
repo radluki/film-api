@@ -3,7 +3,7 @@ import { IFileProxy } from "./file-proxy";
 
 export interface IDbProxy {
   read(): DbData;
-  write(data: DbData);
+  write(data: DbData): void;
 }
 
 export class NumericConversionsFileProxyDecorator implements IDbProxy {
