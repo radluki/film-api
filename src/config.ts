@@ -13,7 +13,9 @@ function loadGenres(dbpath): string[] {
   console.log(`Loading genres from ${dbpath}`);
   dbpath = path.resolve(dbpath);
   console.log(`dbpath resolved to ${dbpath}`);
-  const { genres } = require(dbpath); // eslint-disable-line
+  const data = fs.readFileSync(dbpath, "utf-8");
+  const { genres } = JSON.parse(data);
+
   console.log(`Loaded genres:`, genres);
   return genres || [];
 }

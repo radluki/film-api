@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon --ignore ./data/ ./src/index.ts",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "lint": "eslint --ext .ts ./src ./tests",
     "build": "tsc",
     "start": "tsc && node ./dist/src/index.js",

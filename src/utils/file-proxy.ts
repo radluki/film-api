@@ -9,7 +9,7 @@ export class FileProxy implements IFileProxy {
   constructor(private readonly filename: string) {}
 
   read(): unknown {
-    return JSON.parse(readFileSync(this.filename).toString());
+    return JSON.parse(readFileSync(this.filename, "utf-8"));
   }
 
   write(data: unknown) {
