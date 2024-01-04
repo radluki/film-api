@@ -7,8 +7,7 @@ export interface IDbProxy {
 }
 
 export class NumericConversionsFileProxyDecorator implements IDbProxy {
-  constructor(
-    private readonly fileProxy: IFileProxy) { }
+  constructor(private readonly fileProxy: IFileProxy) {}
 
   read(): DbData {
     const data = this.fileProxy.read();

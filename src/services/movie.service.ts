@@ -1,5 +1,5 @@
 import { Movie, DbData } from "../models/db.types";
-import { StatusCodes } from 'http-status-codes';
+import { StatusCodes } from "http-status-codes";
 import { IDbProxy } from "../utils/file-proxy-decorator";
 
 export interface IMovieService {
@@ -9,11 +9,14 @@ export interface IMovieService {
 }
 
 export class MovieCreationResult {
-  constructor(readonly status: number, readonly message: { id?: number, error?: string, message?: string }) { }
+  constructor(
+    readonly status: number,
+    readonly message: { id?: number; error?: string; message?: string },
+  ) {}
 }
 
 export class MovieService implements IMovieService {
-  constructor(private readonly dbProxy: IDbProxy) { }
+  constructor(private readonly dbProxy: IDbProxy) {}
 
   getGenres(): string[] {
     return this.dbProxy.read()?.genres || [];
@@ -23,14 +26,18 @@ export class MovieService implements IMovieService {
     const dbdata: DbData = this.dbProxy.read();
     if (!dbdata.movies) dbdata.movies = [];
     if (isTitleDuplicated(movie.title, dbdata.movies))
-      return new MovieCreationResult(StatusCodes.CONFLICT,
-        { error: `Title "${movie.title}" already exists` });
+      return new MovieCreationResult(StatusCodes.CONFLICT, {
+        error: `Title "${movie.title}" already exists`,
+      });
 
     const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
     dbdata.movies.push(newMovie);
     this.dbProxy.write(dbdata);
 
-    return new MovieCreationResult(StatusCodes.CREATED, { id: newMovie.id, message: 'Movie created' });
+    return new MovieCreationResult(StatusCodes.CREATED, {
+      id: newMovie.id,
+      message: "Movie created",
+    });
 
     function generateNewId(movies: Movie[]) {
       return movies.reduce((maxId, movie) => Math.max(maxId, movie.id), 0) + 1;
@@ -44,19 +51,21 @@ export class MovieService implements IMovieService {
     const dbdata = this.dbProxy.read();
     if (!dbdata || !dbdata.movies) return [];
     const movies = dbdata.movies.filter(filterByDuration);
-    if (!genres)
-      return getListWithRandomElement(movies);
+    if (!genres) return getListWithRandomElement(movies);
     return filterAndSortByMatchingGenres(movies);
 
     function filterAndSortByMatchingGenres(movies: Movie[]) {
-      return movies.map(mapAddingPriority)
+      return movies
+        .map(mapAddingPriority)
         .filter((movie) => movie.priority > 0)
         .sort((a, b) => b.priority - a.priority)
         .map(mapRemovingPriority);
     }
 
     function mapAddingPriority(movie) {
-      movie.priority = movie.genres.filter((genre) => genres.includes(genre)).length;
+      movie.priority = movie.genres.filter((genre) =>
+        genres.includes(genre),
+      ).length;
       return movie;
     }
 
@@ -66,8 +75,7 @@ export class MovieService implements IMovieService {
     }
 
     function filterByDuration(movie) {
-      if (!duration)
-        return true;
+      if (!duration) return true;
       return movie.runtime <= duration + 10 && movie.runtime >= duration - 10;
     }
 

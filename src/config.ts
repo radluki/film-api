@@ -1,6 +1,6 @@
-import * as dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
+import * as dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 validateConfig();
@@ -13,7 +13,7 @@ function loadGenres(dbpath): string[] {
   console.log(`Loading genres from ${dbpath}`);
   dbpath = path.resolve(dbpath);
   console.log(`dbpath resolved to ${dbpath}`);
-  const { genres } = require(dbpath)
+  const { genres } = require(dbpath);
   console.log(`Loaded genres:`, genres);
   return genres || [];
 }
@@ -22,10 +22,10 @@ function validateConfig() {
   const { DBPATH, PORT } = process.env;
   const errors = [];
   if (PORT && isNaN(+PORT)) {
-    console.warn(`WARNING!!! PORT is set to ${PORT}, using default value 3000`)
+    console.warn(`WARNING!!! PORT is set to ${PORT}, using default value 3000`);
   }
   if (!DBPATH) {
-    errors.push('DBPATH is not set');
+    errors.push("DBPATH is not set");
   }
   if (!fs.existsSync(DBPATH)) {
     errors.push(`DBPATH ${DBPATH} file does not exist`);

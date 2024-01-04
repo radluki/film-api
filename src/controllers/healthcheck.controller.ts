@@ -1,3 +1,3 @@
 export const healthckeckController = (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date() })
+  res.json({ status: "ok", timestamp: new Date() });
 };

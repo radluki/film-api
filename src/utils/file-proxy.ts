@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from "fs";
 
 export interface IFileProxy {
   read(): any;
@@ -6,8 +6,7 @@ export interface IFileProxy {
 }
 
 export class FileProxy implements IFileProxy {
-  constructor(
-    private readonly filename: string) { }
+  constructor(private readonly filename: string) {}
 
   read(): any {
     return JSON.parse(readFileSync(this.filename).toString());

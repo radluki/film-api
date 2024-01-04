@@ -1,5 +1,4 @@
 import { GENRES } from "../config";
-import { getArrayFieldsValidator} from "./validation-utils";
+import { getArrayFieldsValidator } from "./validation-utils";
 
-
-export const  genresValidator = getArrayFieldsValidator(GENRES);
+export const genresValidator = getArrayFieldsValidator(GENRES);
