@@ -11,7 +11,12 @@ export const validate = (validations) => {
   };
 };
 
-export const splitStringToArray = (value) => (typeof value === 'string' ? value.split(',') : [value])
+export const commaSeparatedArraySanitizer = (value) => {
+  const split = (item) => item.split(',');
+  if (Array.isArray(value))
+    return [].concat(...value.map(split));
+  return split(value)
+}
 
 export function getArrayFieldsValidator(allowedElements) {
   const validator = (value) => {
