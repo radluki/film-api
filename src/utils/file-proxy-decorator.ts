@@ -1,5 +1,6 @@
 import { DbData } from "../models/db.types";
 import { IFileProxy } from "./file-proxy";
+import { validateDbData } from "./db-validation";
 
 export interface IDbProxy {
   read(): DbData;
@@ -10,16 +11,8 @@ export class NumericConversionsFileProxyDecorator implements IDbProxy {
   constructor(private readonly fileProxy: IFileProxy) {}
 
   read(): DbData {
-    const data = this.fileProxy.read() as DbData;
-    if (!data) return { movies: [], genres: [] };
-    if (!data.movies) data.movies = [];
-    if (!data.genres) data.genres = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data.movies.forEach((movie: any) => {
-      movie.year = parseInt(movie.year);
-      movie.runtime = parseInt(movie.runtime);
-    });
-    return data;
+    const rawData = this.fileProxy.read();
+    return validateDbData(rawData);
   }
 
   write(data: DbData) {

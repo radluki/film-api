@@ -12,28 +12,41 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-it("read when data is null", () => {
+it("read throws when data is null", () => {
   fileProxyMock.read.mockReturnValueOnce(null);
-  const data = sut.read();
-  expect(data).toEqual({ movies: [], genres: [] });
+  expect(() => sut.read()).toThrow("JSON db data validation error");
 });
 
-it("read when data has no movies", () => {
+it("read throws when no movies", () => {
   fileProxyMock.read.mockReturnValueOnce({ genres: ["xxx"] });
-  const data = sut.read();
-  expect(data).toEqual({ movies: [], genres: ["xxx"] });
+  expect(() => sut.read()).toThrow(
+    'JSON db data validation error: "movies" is required',
+  );
 });
 
-it("read when data has no genres", () => {
+it("read throws when data has no genres", () => {
   fileProxyMock.read.mockReturnValueOnce({ movies: [movie] });
-  const data = sut.read();
-  expect(data).toEqual({ movies: [movie], genres: [] });
+  expect(() => sut.read()).toThrow(
+    'JSON db data validation error: "genres" is required',
+  );
 });
 
 it("read should parse runtime and year to number", () => {
   fileProxyMock.read.mockReturnValueOnce({
     genres: [],
     movies: [{ ...movie, runtime: "100", year: "2000" }],
+  });
+  const data = sut.read();
+  expect(data).toEqual({
+    genres: [],
+    movies: [{ ...movie, runtime: 100, year: 2000 }],
+  });
+});
+
+it("read should parse runtime and year even if conversion not needed", () => {
+  fileProxyMock.read.mockReturnValueOnce({
+    genres: [],
+    movies: [{ ...movie, runtime: 100, year: 2000 }],
   });
   const data = sut.read();
   expect(data).toEqual({

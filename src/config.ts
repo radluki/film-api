@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import { validateDbData } from "./utils/db-validation";
 
 dotenv.config();
 validateConfig();
@@ -13,8 +14,8 @@ function loadGenres(dbpath): string[] {
   console.log(`Loading genres from ${dbpath}`);
   dbpath = path.resolve(dbpath);
   console.log(`dbpath resolved to ${dbpath}`);
-  const data = fs.readFileSync(dbpath, "utf-8");
-  const { genres } = JSON.parse(data);
+  const rawData = JSON.parse(fs.readFileSync(dbpath, "utf-8"));
+  const { genres } = validateDbData(rawData);
 
   console.log(`Loaded genres:`, genres);
   return genres || [];
