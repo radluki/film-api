@@ -16,11 +16,15 @@ export class DbProxyValidatingAdapter implements IDbProxy {
   }
 
   write(data: DbData) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data.movies.forEach((movie: any) => {
-      movie.year = movie.year.toString();
-      movie.runtime = movie.runtime.toString();
-    });
-    this.fileProxy.write(data);
+    data = validateDbData(data);
+    const moviesInDbFormat = data.movies.map(transformMovieForStoringInDb);
+    const dataToWrite = { ...data, movies: moviesInDbFormat };
+    this.fileProxy.write(dataToWrite);
   }
 }
+
+const transformMovieForStoringInDb = (movie) => ({
+  ...movie,
+  year: movie.year.toString(),
+  runtime: movie.runtime.toString(),
+});

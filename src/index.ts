@@ -7,11 +7,8 @@ import { createMoviesRouter } from "./routers/movies.router";
 import { healthckeckController } from "./controllers/healthcheck.controller";
 
 const fileProxy = new FileProxy(DBPATH);
-const fileProxyWithNumericConversions =
-  new DbProxyValidatingAdapter(fileProxy);
-const movieService: IMovieService = new MovieService(
-  fileProxyWithNumericConversions,
-);
+const dbProxy = new DbProxyValidatingAdapter(fileProxy);
+const movieService: IMovieService = new MovieService(dbProxy);
 
 const app = express();
 app.use("/movies", createMoviesRouter(movieService));

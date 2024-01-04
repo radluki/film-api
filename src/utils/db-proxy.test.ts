@@ -1,7 +1,8 @@
 import { IFileProxy } from "./file-proxy";
 import { DbProxyValidatingAdapter } from "./db-proxy";
-import { movie } from "../../tests/test-data";
+import { movie as movieWithoutId } from "../../tests/test-data";
 
+const movie = { ...movieWithoutId, id: 1 };
 const fileProxyMock = {
   read: jest.fn(),
   write: jest.fn(),
@@ -69,5 +70,15 @@ it("write should stringify runtime and year", () => {
 
 it("write may throw when data is invalid DbData", () => {
   const data: any = {};
-  expect(() => sut.write(data)).toThrow("Cannot read properties of undefined");
+  expect(() => sut.write(data)).toThrow("JSON db data validation error");
+});
+
+it('write should throw when a movie has no "id"', () => {
+  const data = {
+    genres: [],
+    movies: [movie, { ...movie, id: undefined }],
+  };
+  expect(() => sut.write(data)).toThrow(
+    'JSON db data validation error: "movies[1].id" is required',
+  );
 });

@@ -4,15 +4,15 @@ import { DbData } from "../models/db.types";
 const genresSchema = Joi.array().items(Joi.string()).required();
 
 const movieSchema = Joi.object({
-  id: Joi.number(),
+  id: Joi.number().required(),
   genres: genresSchema,
   title: Joi.string().required(),
   year: Joi.number().required(),
   runtime: Joi.number().required(),
   director: Joi.string().required(),
-  actors: Joi.string().optional(),
-  plot: Joi.string().optional(),
-  posterUrl: Joi.string().allow("").optional(),
+  actors: Joi.string(),
+  plot: Joi.string(),
+  posterUrl: Joi.string().allow(""),
 });
 
 const dbDataSchema = Joi.object({
