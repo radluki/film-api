@@ -25,7 +25,6 @@ const movie: Movie = {
     GENRE2
   ],
   director: "Tim Burton",
-  posterUrl: "https://dummy.jpg",
 };
 
 jest.mock('../config', () => ({
@@ -115,14 +114,15 @@ describe('movies router GET /', () => {
 
 
 describe('movies router POST /', () => {
+  const id = 44;
+  const message = 'Movie created - fake';
+  const msg = { id, message };
+  const CREATE = 201;
+  const successResult = new MovieCreationResult(CREATE, msg);
+
   it('should call service with body', () => {
-    const id = 44;
-    const message = 'Movie created - fake';
-    const msg = { id, message };
-    const status = 201;
-    const successCreateResult = new MovieCreationResult(status, msg);
-    movieServiceMock.createMovie.mockReturnValueOnce(successCreateResult);
-    return request(app).post('/').send(movie).expect(status).expect((res) => {
+    movieServiceMock.createMovie.mockReturnValueOnce(successResult);
+    return request(app).post('/').send(movie).expect(CREATE).expect((res) => {
       expect(res.body).toEqual(msg);
       expect(movieServiceMock.createMovie).toHaveBeenCalledWith(movie);
     });
@@ -132,8 +132,8 @@ describe('movies router POST /', () => {
     const error = 'error - fake';
     const msg = { error };
     const status = 409;
-    const successCreateResult = new MovieCreationResult(status, msg);
-    movieServiceMock.createMovie.mockReturnValueOnce(successCreateResult);
+    const errorResult = new MovieCreationResult(status, msg);
+    movieServiceMock.createMovie.mockReturnValueOnce(errorResult);
     return request(app).post('/').send(movie).expect(status).expect((res) => {
       expect(res.body).toEqual(msg);
       expect(movieServiceMock.createMovie).toHaveBeenCalledWith(movie);
@@ -146,6 +146,107 @@ describe('movies router POST /', () => {
     return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
       expect(res.body).toEqual({ errors });
       expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie without title', () => {
+    const invalidMovie = { ...movie, title: undefined };
+    const errors = ['title is a required string with max length 255'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie without year', () => {
+    const invalidMovie = { ...movie, year: undefined };
+    const errors = ['numeric year is required'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie with nonnumeric year', () => {
+    const invalidMovie = { ...movie, year: 'xd' };
+    const errors = ['numeric year is required'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie without runtime', () => {
+    const invalidMovie = { ...movie, runtime: undefined };
+    const errors = ['numeric runtime is required'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie with nonnumeric runtime', () => {
+    const invalidMovie = { ...movie, runtime: 'xd' };
+    const errors = ['numeric runtime is required'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie without director', () => {
+    const invalidMovie = { ...movie, director: undefined };
+    const errors = ['director is a required string with max length 255'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie with director as an array', () => {
+    const invalidMovie = { ...movie, director: ['d1', 'd2'] };
+    const errors = ['director is a required string with max length 255'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie with actors as an array', () => {
+    const invalidMovie = { ...movie, actors: ['d1', 'd2'] };
+    const errors = ['actors is optional string'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should block movie with posterUrl with invalid url', () => {
+    const invalidMovie = { ...movie, posterUrl: "invalid url" };
+    const errors = ['posterUrl is an optional valid URL'];
+    return request(app).post('/').send(invalidMovie).expect(400).expect((res) => {
+      expect(res.body).toEqual({ errors });
+      expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
+    });
+  });
+
+  const validUrl = "https://valid.url";
+
+  it('should accept movie with posterUrl with valid url', () => {
+    const validMovie = { ...movie, posterUrl: validUrl };
+    movieServiceMock.createMovie.mockReturnValueOnce(successResult);
+    return request(app).post('/').send(validMovie).expect(CREATE).expect((res) => {
+      expect(res.body).toEqual(msg);
+      expect(movieServiceMock.createMovie).toHaveBeenCalledWith(validMovie);
+    });
+  });
+
+  it('should accept movie with optional fields', () => {
+    const validMovie = { ...movie, plot: 'plot', actors: 'actors', posterUrl: validUrl };
+    movieServiceMock.createMovie.mockReturnValueOnce(successResult);
+    return request(app).post('/').send(validMovie).expect(CREATE).expect((res) => {
+      expect(res.body).toEqual(msg);
+      expect(movieServiceMock.createMovie).toHaveBeenCalledWith(validMovie);
     });
   });
 });
