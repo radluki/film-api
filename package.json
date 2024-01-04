@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon --ignore ./data/ ./src/index.ts",
+    "build": "tsc",
+    "start": "tsc && node ./dist/src/index.js",
     "test:ut": "jest --rootDir src",
     "test:ut:watch": "jest --watch --rootDir src",
     "test": "jest -- get && jest --runInBand -- post error",
