@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { expectArrayOfMovies, expectSingleMovie, expectArrayWithSingleMovie, url } from './common';
+import { expectArrayOfMovies, expectArrayWithSingleMovie, url } from './common';
 
 describe('/movies GET - response validation', () => {
   it('when no params should return a random movie', () => {

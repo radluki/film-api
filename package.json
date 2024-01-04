@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx nodemon --ignore ./data/ ./src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint": "eslint --ext .ts ./src",
+    "lint": "eslint --ext .ts ./src ./tests",
     "build": "tsc",
     "start": "tsc && node ./dist/src/index.js",
     "healthcheck": "ts-node ./scripts/healthcheck.ts",

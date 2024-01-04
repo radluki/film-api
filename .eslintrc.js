@@ -18,7 +18,13 @@ module.exports = {
             "parserOptions": {
                 "sourceType": "script"
             }
-        }
+        },
+        {
+            "files": ["**/*.test.ts", "**/*.spec.ts", "tests/**/*.ts"],
+            "rules": {
+              "@typescript-eslint/no-explicit-any": "off"
+            }
+          }
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {

@@ -21,7 +21,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie without title', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.title = undefined;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -32,7 +32,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with too long title', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.title = 'a'.repeat(256);
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -43,7 +43,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('201 - movie with title of max length', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.title = 'a'.repeat(255);
     return request(url).post('/movies')
       .send(movie)
@@ -51,7 +51,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with invalid year', () => {
-    let invalidMovie: any = { ...movie };
+    const invalidMovie: any = { ...movie };
     invalidMovie.year = 'invalid year';
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -62,7 +62,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie without year', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.year = undefined;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -73,7 +73,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie without runtime', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.runtime = undefined;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -84,7 +84,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with invalid runtime', () => {
-    let invalidMovie: any = { ...movie };
+    const invalidMovie: any = { ...movie };
     invalidMovie.runtime = 'invalid runtime';
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -95,7 +95,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie without director', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.director = undefined;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -106,7 +106,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with too long director', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.director = 'a'.repeat(256);
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -117,7 +117,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('201 - movie with director of max length', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.director = 'a'.repeat(255);
     return request(url).post('/movies')
       .send(movie)
@@ -125,7 +125,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie without genres', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.genres = undefined;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -136,7 +136,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with invalid genres', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.genres = ['Animation', 'xxxYYY', 'Comedy'];
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -147,7 +147,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with genres not an array', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.genres = <any>'invalid genres';
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -158,7 +158,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with actors not a string', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.actors = <any>123;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -169,7 +169,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with actors as array', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.actors = <any>['Johnny Depp'];
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -180,7 +180,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('201 - movie without actors', () => {
-    let modifiedMovie = { ...movie };
+    const modifiedMovie = { ...movie };
     modifiedMovie.actors = undefined;
     return request(url).post('/movies')
       .send(modifiedMovie)
@@ -188,7 +188,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with plot not a string', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.plot = <any>123;
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -199,7 +199,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('201 - movie without plot', () => {
-    let modifiedMovie = { ...movie };
+    const modifiedMovie = { ...movie };
     modifiedMovie.actors = undefined;
     return request(url).post('/movies')
       .send(modifiedMovie)
@@ -207,7 +207,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with posterUrl as invalid url', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     invalidMovie.posterUrl = 'invalid url';
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -218,7 +218,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('201 - movie without posterUrl', () => {
-    let modifiedMovie = { ...movie };
+    const modifiedMovie = { ...movie };
     modifiedMovie.posterUrl = undefined;
     return request(url).post('/movies')
       .send(modifiedMovie)
@@ -226,7 +226,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - movie with unknown field', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     (<any>invalidMovie).unknownFiled = 'unknown';
     return request(url).post('/movies')
       .send(invalidMovie)
@@ -237,7 +237,7 @@ describe('POST /movies - validation', () => {
   });
 
   it('400 - multiple validations fail', () => {
-    let invalidMovie = { ...movie };
+    const invalidMovie = { ...movie };
     (<any>invalidMovie).trala = 'unknown';
     invalidMovie.year = <any>'unknown';
     invalidMovie.genres = ['xxx'];

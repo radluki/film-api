@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { readDbContent, url, writeDbContent } from './common';
-import { DbData } from '../src/models/db.types';
+import { DbData, Movie } from '../src/models/db.types';
 import { movie, dbPath } from './test-data';
 
 let dbContent: DbData;
@@ -31,9 +31,9 @@ describe('POST /movies - logic', () => {
     expect(getResp.body[0]).toEqual(movie);
   });
 
-  function convertRuntimeAndYearToNUmbers(movie: any) {
-    movie.runtime = parseInt(movie.runtime);
-    movie.year = parseInt(movie.year);
+  function convertRuntimeAndYearToNUmbers(movie: Movie) {
+    movie.runtime = parseInt(movie.runtime.toString());
+    movie.year = parseInt(movie.year.toString());
     return movie;
   }
 
