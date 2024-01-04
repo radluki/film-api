@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { IMovieService, MovieService } from './services/movie.service';
 import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
@@ -17,11 +17,13 @@ const movieService: IMovieService = new MovieService(fileProxyWithNumericConvers
 
 const moviesGetController = createMoviesGetController(movieService);
 const moviesPostController = createMoviesPostController(movieService);
-const MOVIES_URL = '/movies';
+
+const moviesRouter = Router();
+moviesRouter.get('/', validateMoviesGetQuery, moviesGetController);
+moviesRouter.post('/', validateMoviesPostBody, moviesPostController);
 
 const app = express();
 app.use(bodyParser.json());
-app.get(MOVIES_URL, validateMoviesGetQuery, moviesGetController);
-app.post(MOVIES_URL, validateMoviesPostBody, moviesPostController);
+app.use('/movies', moviesRouter);
 app.use(errorHandler); // Should be the last to overwite the default error handler
 app.listen(PORT, () => console.log(`Movie Server is running on http://localhost:${PORT}`));
