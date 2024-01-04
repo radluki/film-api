@@ -4,6 +4,7 @@ import { validateMoviesGetQuery } from '../middleware/movies-get-query.validatio
 import { validateMoviesPostBody } from '../middleware/movies-post-body.validation';
 import { createMoviesGetController } from '../controllers/movies-get.controller';
 import { createMoviesPostController } from '../controllers/movies-post.controller';
+import { errorHandler } from '../middleware/error-handler';
 
 export function createMoviesRouter(movieService: IMovieService) {
   const moviesRouter = Router();
@@ -14,6 +15,7 @@ export function createMoviesRouter(movieService: IMovieService) {
 
   moviesRouter.get('/', validateMoviesGetQuery, moviesGetController);
   moviesRouter.post('/', validateMoviesPostBody, moviesPostController);
+  moviesRouter.use(errorHandler);
 
   return moviesRouter;
 }

@@ -110,6 +110,15 @@ describe('movies router GET /', () => {
       expect(movieServiceMock.getMovies).not.toHaveBeenCalled();
     });
   });
+
+  it('get / should return 500 when service throws', () => {
+    jest.resetAllMocks();
+    movieServiceMock.getMovies.mockImplementation(() => { throw new Error('XXX'); });
+    return request(app).get('/').expect(500).expect((res) => {
+      expect(res.body).toEqual({ error: 'XXX', message: 'Internal Server Error' });
+      expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, undefined);
+    });
+  });
 });
 
 
@@ -247,6 +256,15 @@ describe('movies router POST /', () => {
     return request(app).post('/').send(validMovie).expect(CREATE).expect((res) => {
       expect(res.body).toEqual(msg);
       expect(movieServiceMock.createMovie).toHaveBeenCalledWith(validMovie);
+    });
+  });
+
+  it('post / should return 500 when service throws', () => {
+    jest.resetAllMocks();
+    movieServiceMock.createMovie.mockImplementation(() => { throw new Error('XXX'); });
+    return request(app).post('/').send(movie).expect(500).expect((res) => {
+      expect(res.body).toEqual({ error: 'XXX', message: 'Internal Server Error' });
+      expect(movieServiceMock.createMovie).toHaveBeenCalledWith(movie);
     });
   });
 });
