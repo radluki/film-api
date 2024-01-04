@@ -24,3 +24,18 @@ export function getArrayFieldsValidator(allowedElements) {
   }
   return validator;
 }
+
+export function getString255Validator(fieldName) {
+  return (value) => {
+    if (typeof value !== 'string') throw new Error(`${fieldName} is a required string with max length 255`);
+    if (value.length > 255)
+      throw new Error(`${fieldName} is too long, max length is 255, actual length is ${value.length}`);
+    return true;
+  }
+}
+
+export function validateBodyFieldNames(value, allowedFields: string[]) {
+  const unknownFields = Object.keys(value).filter(field => !allowedFields.includes(field));
+  if (unknownFields.length == 0) return true;
+  throw new Error(`Unknown fields: ${unknownFields.join(', ')}`);
+}

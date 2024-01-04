@@ -3,8 +3,8 @@ import { IMovieService, MovieService } from './services/movie.service';
 import { FileProxy } from './utils/file-proxy';
 import bodyParser from 'body-parser';
 import { DBPATH, PORT } from './config';
-import { getMoviesGetQueryValidator } from './middleware/movies-get-query.validation';
-import { getMoviesPostBodyValidator } from './middleware/movies-post-body.validation';
+import { validateMoviesGetQuery } from './middleware/movies-get-query.validation';
+import { validateMoviesPostBody } from './middleware/movies-post-body.validation';
 import { createMoviesGetController } from './controllers/movies-get.controller';
 import { createMoviesPostController } from './controllers/movies-post.controller';
 import { errorHandler } from './middleware/error-handler';
@@ -17,15 +17,12 @@ function main() {
   const fileProxyWithNumericConversions = new NumericConversionsFileProxyDecorator(fileProxy);
   const movieService: IMovieService = new MovieService(fileProxyWithNumericConversions);
 
-  const allowedGenres = movieService.getGenres();
-  const moviesGetQueryValidator = getMoviesGetQueryValidator(allowedGenres);
-  const moviesPostBodyValidator = getMoviesPostBodyValidator(allowedGenres);
   const moviesGetController = createMoviesGetController(movieService);
   const moviesPostController = createMoviesPostController(movieService);
 
   const MOVIES_URL = '/movies';
-  app.get(MOVIES_URL, moviesGetQueryValidator, moviesGetController);
-  app.post(MOVIES_URL, moviesPostBodyValidator, moviesPostController);
+  app.get(MOVIES_URL, validateMoviesGetQuery, moviesGetController);
+  app.post(MOVIES_URL, validateMoviesPostBody, moviesPostController);
   app.use(errorHandler); // Should be the last to overwite the default error handler
   app.listen(PORT, () => console.log(`Movie Server is running on http://localhost:${PORT}`));
 }
