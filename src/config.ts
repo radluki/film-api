@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 validateConfig();
@@ -9,7 +10,11 @@ export const PORT: number = +process.env.PORT || 3000;
 export const GENRES: string[] = loadGenres(DBPATH);
 
 function loadGenres(dbpath): string[] {
-  const { genres } = require(`../${dbpath}`)
+  console.log(`Loading genres from ${dbpath}`);
+  dbpath = path.resolve(dbpath);
+  console.log(`dbpath resolved to ${dbpath}`);
+  const { genres } = require(dbpath)
+  console.log(`Loaded genres:`, genres);
   return genres || [];
 }
 
@@ -28,9 +33,5 @@ function validateConfig() {
   if (errors.length > 0) {
     console.error(`ERROR!!! Invalid configuration, reasons:`, errors);
     process.exit(1);
-  }
-  const GENRES = loadGenres(DBPATH);
-  if (GENRES.length == 0) {
-    console.warn('WARNING!!! No genres found in DBPATH file')
   }
 }
