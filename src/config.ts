@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
-import { validateDbData } from "./utils/db-validation";
+import { dbDataSchema } from "./utils/db-validation";
 
 dotenv.config();
 validateConfig();
@@ -11,14 +11,21 @@ export const PORT: number = +process.env.PORT || 3000;
 export const GENRES: string[] = loadGenres(DBPATH);
 
 function loadGenres(dbpath): string[] {
-  console.log(`Loading genres from ${dbpath}`);
   dbpath = path.resolve(dbpath);
-  console.log(`dbpath resolved to ${dbpath}`);
+  console.log(`Loading genres from ${dbpath}`);
   const rawData = JSON.parse(fs.readFileSync(dbpath, "utf-8"));
-  const { genres } = validateDbData(rawData);
+
+  const {
+    error,
+    value: { genres },
+  } = dbDataSchema.validate(rawData);
+  if (error) {
+    console.error(`ERROR!!! Database validation failed:`, error.message);
+    process.exit(1);
+  }
 
   console.log(`Loaded genres:`, genres);
-  return genres || [];
+  return genres;
 }
 
 function validateConfig() {

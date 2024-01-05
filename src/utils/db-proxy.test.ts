@@ -15,20 +15,20 @@ beforeEach(() => {
 
 it("read throws when data is null", () => {
   fileProxyMock.read.mockReturnValueOnce(null);
-  expect(() => sut.read()).toThrow("JSON db data validation error");
+  expect(() => sut.read()).toThrow("Database validation failed:");
 });
 
 it("read throws when no movies", () => {
   fileProxyMock.read.mockReturnValueOnce({ genres: ["xxx"] });
   expect(() => sut.read()).toThrow(
-    'JSON db data validation error: "movies" is required',
+    'Database validation failed: "movies" is required',
   );
 });
 
 it("read throws when data has no genres", () => {
   fileProxyMock.read.mockReturnValueOnce({ movies: [movie] });
   expect(() => sut.read()).toThrow(
-    'JSON db data validation error: "genres" is required',
+    'Database validation failed: "genres" is required',
   );
 });
 
@@ -70,7 +70,9 @@ it("write should stringify runtime and year", () => {
 
 it("write may throw when data is invalid DbData", () => {
   const data: any = {};
-  expect(() => sut.write(data)).toThrow("JSON db data validation error");
+  expect(() => sut.write(data)).toThrow(
+    'Database validation failed: "genres" is required',
+  );
 });
 
 it('write should throw when a movie has no "id"', () => {
@@ -79,6 +81,6 @@ it('write should throw when a movie has no "id"', () => {
     movies: [movie, { ...movie, id: undefined }],
   };
   expect(() => sut.write(data)).toThrow(
-    'JSON db data validation error: "movies[1].id" is required',
+    'Database validation failed: "movies[1].id" is required',
   );
 });

@@ -15,7 +15,7 @@ const movieSchema = Joi.object({
   posterUrl: Joi.string().allow(""),
 });
 
-const dbDataSchema = Joi.object({
+export const dbDataSchema = Joi.object({
   genres: genresSchema,
   movies: Joi.array().items(movieSchema).required(),
 });
@@ -25,7 +25,7 @@ export const validateDbData = (data: any): DbData => {
   const { error, value } = dbDataSchema.validate(data);
 
   if (error) {
-    throw new Error(`JSON db data validation error: ${error.message}`);
+    throw new Error(`Database validation failed: ${error.message}`);
   }
 
   return value;
