@@ -16,7 +16,7 @@ describe("/movies GET - query parameter validation", () => {
       .expect(400)
       .expect("Content-Type", /json/)
       .expect((res) => {
-        expect(res.body.errors[0]).toEqual("Duration must be a number");
+        expect(res.body.errors[0]).toEqual("duration must be a number");
       });
   });
 

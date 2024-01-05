@@ -140,7 +140,7 @@ describe("movies router GET /", () => {
       .query(query)
       .expect(400)
       .expect((res) => {
-        expect(res.body.errors).toEqual(["Duration must be a number"]);
+        expect(res.body.errors).toEqual(["duration must be a number"]);
         expect(movieServiceMock.getMovies).not.toHaveBeenCalled();
       });
   });
