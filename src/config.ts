@@ -20,10 +20,12 @@ const debounce = (func, delay) => {
   };
 };
 
-
-fs.watch(DBPATH, debounce((eventType) => {
-  if (eventType === 'change') {
-    logger.info(`${DBPATH} has changed. Reloading...`);
-    GENRES = loadGenres(DBPATH);
-  }
-}, 200));
+fs.watch(
+  DBPATH,
+  debounce((eventType) => {
+    if (eventType === "change") {
+      logger.info(`${DBPATH} has changed. Reloading...`);
+      GENRES = loadGenres(DBPATH);
+    }
+  }, 200),
+);

@@ -7,7 +7,7 @@ import { movie } from "./test-data";
 it("/movies GET should return 500 when db was cleared", async () => {
   const dbdata = readDbContent(dbPath);
 
-  writeDbContent(dbPath, '');
+  writeDbContent(dbPath, "");
   const resp = await request(url).get("/movies");
   writeDbContent(dbPath, dbdata);
 
@@ -19,7 +19,7 @@ it("/movies GET should return 500 when db was cleared", async () => {
 it("/movies POST should return 500 when db was cleared", async () => {
   const dbdata = readDbContent(dbPath);
 
-  writeDbContent(dbPath, '');
+  writeDbContent(dbPath, "");
   const resp = await request(url).post("/movies").send(movie);
   writeDbContent(dbPath, dbdata);
 

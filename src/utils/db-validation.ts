@@ -15,21 +15,25 @@ const movieSchema = Joi.object({
   posterUrl: Joi.string().allow(""),
 });
 
-export const dbDataSchema = Joi.object({
+const dbDataSchema = Joi.object({
   genres: genresSchema,
   movies: Joi.array().items(movieSchema).required(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateDbData = (data: any): DbData => {
+export function validateDbData(data: any): DbData {
   const { error, value } = dbDataSchema.validate(data);
   if (!error) return value;
   throw new Error(`Database validation failed: ${error.message}`);
-};
+}
+
+const dbDataGenresOnlySchema = Joi.object({
+  genres: genresSchema,
+}).unknown();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateDbDataGenres = (data: { genres: any }): string[] => {
-  const { error, value } = genresSchema.validate(data.genres);
-  if (!error) return value;
+export function validateDbDataGenres(data: unknown): string[] {
+  const { error, value } = dbDataGenresOnlySchema.validate(data);
+  if (!error) return value.genres;
   throw new Error(`Database genres validation failed: ${error.message}`);
 }
