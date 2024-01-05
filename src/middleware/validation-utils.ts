@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import { GENRES } from "../config";
 
 export const validate = (validations) => {
   return async (req, res, next) => {
@@ -24,3 +25,9 @@ export function validateBodyFieldNames(value, allowedFields: string[]) {
   if (unknownFields.length == 0) return true;
   throw new Error(`Unknown fields: ${unknownFields.join(", ")}`);
 }
+
+export const genresValidator = (value: string[]) => {
+  const invalid = value.filter((item) => !GENRES.includes(item));
+  if (invalid.length == 0) return true;
+  throw new Error(`Invalid genres: ${invalid.join(", ")}`);
+};

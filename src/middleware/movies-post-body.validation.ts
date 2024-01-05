@@ -1,6 +1,9 @@
 import { body } from "express-validator";
-import { validate, validateBodyFieldNames } from "./validation-utils";
-import { genresValidator } from "./genres-validation";
+import {
+  validate,
+  validateBodyFieldNames,
+  genresValidator,
+} from "./validation-utils";
 
 const MOVIE_FIELDS = [
   "title",

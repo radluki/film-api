@@ -1,6 +1,9 @@
 import { query } from "express-validator";
-import { commaSeparatedArraySanitizer, validate } from "./validation-utils";
-import { genresValidator } from "./genres-validation";
+import {
+  commaSeparatedArraySanitizer,
+  validate,
+  genresValidator,
+} from "./validation-utils";
 
 export const validateMoviesGetQuery = validate([
   query("duration")
