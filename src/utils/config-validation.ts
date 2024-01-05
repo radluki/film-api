@@ -1,10 +1,7 @@
-import * as dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import { dbDataSchema } from "./db-validation";
 import Joi from "joi";
-
-dotenv.config();
 
 const validatePathExists = (value) => {
   if (!fs.existsSync(value)) {
