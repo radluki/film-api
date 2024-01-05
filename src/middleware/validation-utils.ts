@@ -18,8 +18,7 @@ export const commaSeparatedArraySanitizer = (value) => {
 };
 
 export function getArrayFieldsValidator(allowedElements) {
-  const validator = (value) => {
-    if (!Array.isArray(value)) throw new Error("genres must be an array");
+  const validator = (value: unknown[]) => {
     const invalid = value.filter((item) => !allowedElements.includes(item));
     if (invalid.length == 0) return true;
     throw new Error(`Invalid genres: ${invalid.join(", ")}`);

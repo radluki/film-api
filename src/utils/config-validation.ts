@@ -4,10 +4,8 @@ import { dbDataSchema } from "./db-validation";
 import Joi from "joi";
 
 const validatePathExists = (value) => {
-  if (!fs.existsSync(value)) {
-    throw new Error(`${value} file does not exist`);
-  }
-  return value;
+  if (fs.existsSync(value)) return value;
+  throw new Error(`${value} file does not exist`);
 };
 
 const envVarsSchema = Joi.object({

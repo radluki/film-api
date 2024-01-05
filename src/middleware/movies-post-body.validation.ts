@@ -25,7 +25,11 @@ export const validateMoviesPostBody = validate([
   body("year").isNumeric().withMessage("numeric year is required"),
   body("runtime").isNumeric().withMessage("numeric runtime is required"),
   body("director").custom(getString255Validator("director")),
-  body("genres").custom(genresValidator),
+  body("genres")
+    .isArray()
+    .withMessage("genres must be an array")
+    .bail()
+    .custom(genresValidator),
   body("actors").optional().isString().withMessage("actors is optional string"),
   body("plot").optional().isString().withMessage("plot is optional string"),
   body("posterUrl")
