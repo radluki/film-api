@@ -23,10 +23,13 @@ export const dbDataSchema = Joi.object({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateDbData = (data: any): DbData => {
   const { error, value } = dbDataSchema.validate(data);
-
-  if (error) {
-    throw new Error(`Database validation failed: ${error.message}`);
-  }
-
-  return value;
+  if (!error) return value;
+  throw new Error(`Database validation failed: ${error.message}`);
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const validateDbDataGenres = (data: { genres: any }): string[] => {
+  const { error, value } = genresSchema.validate(data.genres);
+  if (!error) return value;
+  throw new Error(`Database genres validation failed: ${error.message}`);
+}

@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { validateDbData } from "./db-validation";
+import { validateDbDataGenres } from "./db-validation";
 import Joi from "joi";
 import { logger } from "./logger";
 
@@ -33,7 +33,7 @@ export function loadGenres(dbpath): string[] {
   logger.info(`Loading genres from ${dbpath}`);
   try {
     const rawData = JSON.parse(fs.readFileSync(dbpath, "utf-8"));
-    const { genres } = validateDbData(rawData);
+    const genres = validateDbDataGenres(rawData);
     logger.info(`Loaded genres:`);
     console.log(genres);
     return genres;
