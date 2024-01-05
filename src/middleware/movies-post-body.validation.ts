@@ -5,38 +5,20 @@ import {
   validationGuard,
 } from "./validation-utils";
 
-const MOVIE_FIELDS = [
-  "title",
-  "year",
-  "runtime",
-  "director",
-  "genres",
-  "actors",
-  "plot",
-  "posterUrl",
-];
-const validateMovieBodyFieldNames = (value) =>
-  validateBodyFieldNames(value, MOVIE_FIELDS);
-
-const titleMsg = "title is a required string with max length 255";
-const directorMsg = "director is a required string with max length 255";
-const lengthErrorMsgFactory = (value, fieldName) =>
-  `${fieldName} is too long, max length is 255, actual length is ${value.length}`;
-
 export const validateMoviesPostBody = [
   body().custom(validateMovieBodyFieldNames),
   body("title")
     .isString()
-    .withMessage(titleMsg)
+    .withMessage(getString255MsgFactory("title"))
     .isLength({ max: 255 })
-    .withMessage((value) => lengthErrorMsgFactory(value, "title")),
+    .withMessage(getInvalidLengthMsgFactory("title")),
   body("year").isNumeric().withMessage("numeric year is required"),
   body("runtime").isNumeric().withMessage("numeric runtime is required"),
   body("director")
     .isString()
-    .withMessage(directorMsg)
+    .withMessage(getString255MsgFactory("director"))
     .isLength({ max: 255 })
-    .withMessage((value) => lengthErrorMsgFactory(value, "director")),
+    .withMessage(getInvalidLengthMsgFactory("director")),
   body("genres")
     .isArray()
     .withMessage("genres must be an array")
@@ -50,3 +32,25 @@ export const validateMoviesPostBody = [
     .withMessage("posterUrl is an optional valid URL"),
   validationGuard,
 ];
+
+function validateMovieBodyFieldNames(value: string[]) {
+  const MOVIE_FIELDS = [
+    "title",
+    "year",
+    "runtime",
+    "director",
+    "genres",
+    "actors",
+    "plot",
+    "posterUrl",
+  ];
+  return validateBodyFieldNames(value, MOVIE_FIELDS);
+}
+
+function getString255MsgFactory(fieldName) {
+  return `${fieldName} is a required string with max length 255`;
+}
+function getInvalidLengthMsgFactory(fieldName) {
+  return (value) =>
+    `${fieldName} is too long, max length is 255, actual length is ${value.length}`;
+}

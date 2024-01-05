@@ -21,8 +21,8 @@ export function validateBodyFieldNames(value, allowedFields: string[]) {
   throw new Error(`Unknown fields: ${unknownFields.join(", ")}`);
 }
 
-export const genresValidator = (value: string[]) => {
+export function genresValidator(value: string[]) {
   const invalid = value.filter((item) => !GENRES.includes(item));
   if (invalid.length == 0) return true;
   throw new Error(`Invalid genres: ${invalid.join(", ")}`);
-};
+}
