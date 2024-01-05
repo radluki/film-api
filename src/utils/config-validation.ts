@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { dbDataSchema } from "./db-validation";
+import { validateDbData } from "./db-validation";
 import Joi from "joi";
 import { logger } from "./logger";
 
@@ -31,17 +31,14 @@ export interface EnvVars {
 export function loadGenres(dbpath): string[] {
   dbpath = path.resolve(dbpath);
   logger.info(`Loading genres from ${dbpath}`);
-  const rawData = JSON.parse(fs.readFileSync(dbpath, "utf-8"));
-  const {
-    error,
-    value: { genres },
-  } = dbDataSchema.validate(rawData);
-  if (error) {
-    logger.error(`Database validation failed: ${error.message}`);
-    process.exit(1);
+  try {
+    const rawData = JSON.parse(fs.readFileSync(dbpath, "utf-8"));
+    const { genres } = validateDbData(rawData);
+    logger.info(`Loaded genres:`);
+    console.log(genres);
+    return genres;
+  } catch (err) {
+    logger.error(`Error loading genres from ${dbpath}: ${err.message}`);
+    return [];
   }
-
-  logger.info(`Loaded genres:`);
-  console.log(genres);
-  return genres;
 }
