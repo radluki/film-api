@@ -1,8 +1,8 @@
 import { body } from "express-validator";
 import {
-  validate,
   validateBodyFieldNames,
   genresValidator,
+  validationGuard,
 } from "./validation-utils";
 
 const MOVIE_FIELDS = [
@@ -23,7 +23,7 @@ const directorMsg = "director is a required string with max length 255";
 const lengthErrorMsgFactory = (value, fieldName) =>
   `${fieldName} is too long, max length is 255, actual length is ${value.length}`;
 
-export const validateMoviesPostBody = validate([
+export const validateMoviesPostBody = [
   body().custom(validateMovieBodyFieldNames),
   body("title")
     .isString()
@@ -48,4 +48,5 @@ export const validateMoviesPostBody = validate([
     .optional()
     .isURL()
     .withMessage("posterUrl is an optional valid URL"),
-]);
+  validationGuard,
+];

@@ -1,11 +1,11 @@
 import { query } from "express-validator";
 import {
   commaSeparatedArraySanitizer,
-  validate,
   genresValidator,
+  validationGuard,
 } from "./validation-utils";
 
-export const validateMoviesGetQuery = validate([
+export const validateMoviesGetQuery = [
   query("duration")
     .optional()
     .isNumeric()
@@ -15,4 +15,5 @@ export const validateMoviesGetQuery = validate([
     .customSanitizer(commaSeparatedArraySanitizer)
     .isArray()
     .custom(genresValidator),
-]);
+  validationGuard,
+];
