@@ -17,27 +17,6 @@ export const commaSeparatedArraySanitizer = (value) => {
   return split(value);
 };
 
-export function getArrayFieldsValidator(allowedElements) {
-  const validator = (value: unknown[]) => {
-    const invalid = value.filter((item) => !allowedElements.includes(item));
-    if (invalid.length == 0) return true;
-    throw new Error(`Invalid genres: ${invalid.join(", ")}`);
-  };
-  return validator;
-}
-
-export function getString255Validator(fieldName) {
-  return (value) => {
-    if (typeof value !== "string")
-      throw new Error(`${fieldName} is a required string with max length 255`);
-    if (value.length > 255)
-      throw new Error(
-        `${fieldName} is too long, max length is 255, actual length is ${value.length}`,
-      );
-    return true;
-  };
-}
-
 export function validateBodyFieldNames(value, allowedFields: string[]) {
   const unknownFields = Object.keys(value).filter(
     (field) => !allowedFields.includes(field),

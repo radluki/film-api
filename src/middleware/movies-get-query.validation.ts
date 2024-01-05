@@ -10,5 +10,6 @@ export const validateMoviesGetQuery = validate([
   query("genres")
     .optional()
     .customSanitizer(commaSeparatedArraySanitizer)
+    .isArray()
     .custom(genresValidator),
 ]);

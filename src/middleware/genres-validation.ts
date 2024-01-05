@@ -1,4 +1,7 @@
 import { GENRES } from "../config";
-import { getArrayFieldsValidator } from "./validation-utils";
 
-export const genresValidator = getArrayFieldsValidator(GENRES);
+export const genresValidator = (value: string[]) => {
+  const invalid = value.filter((item) => !GENRES.includes(item));
+  if (invalid.length == 0) return true;
+  throw new Error(`Invalid genres: ${invalid.join(", ")}`);
+};
