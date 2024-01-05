@@ -5,16 +5,17 @@ import { DBPATH, PORT } from "./config";
 import { DbProxyValidatingAdapter } from "./utils/db-proxy";
 import { createMoviesRouter } from "./routers/movies.router";
 import { healthckeckController } from "./controllers/healthcheck.controller";
-import morgan from 'morgan';
+import morgan from "morgan";
+import { logger } from "./utils/logger";
 
 const fileProxy = new FileProxy(DBPATH);
 const dbProxy = new DbProxyValidatingAdapter(fileProxy);
 const movieService: IMovieService = new MovieService(dbProxy);
 
 const app = express();
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use("/movies", createMoviesRouter(movieService));
 app.get("/healthcheck", healthckeckController);
 app.listen(PORT, () =>
-  console.log(`Movie Server is running on http://localhost:${PORT}`),
+  logger.info(`Movie Server is running on http://localhost:${PORT}`),
 );

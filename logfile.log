@@ -1,0 +1,41 @@
+error: ENOENT: no such file or directory, open './data/db.json' ENOENT: no such file or directory, open './data/db.json' {"code":"ENOENT","errno":-2,"path":"./data/db.json","stack":"Error: ENOENT: no such file or directory, open './data/db.json'\n    at Object.readFileUtf8 (node:internal/fs/sync:25:18)\n    at readFileSync (node:fs:441:19)\n    at FileProxy.read (/workspaces/film-api/src/utils/file-proxy.ts:12:35)\n    at DbProxyValidatingAdapter.read (/workspaces/film-api/src/utils/db-proxy.ts:14:36)\n    at MovieService.getMovies (/workspaces/film-api/src/services/movie.service.ts:51:33)\n    at /workspaces/film-api/src/controllers/movies-get.controller.ts:8:31\n    at Layer.handle [as handle_request] (/workspaces/film-api/node_modules/express/lib/router/layer.js:95:5)\n    at next (/workspaces/film-api/node_modules/express/lib/router/route.js:144:13)\n    at validationGuard (/workspaces/film-api/src/middleware/validation-utils.ts:6:32)\n    at Layer.handle [as handle_request] (/workspaces/film-api/node_modules/express/lib/router/layer.js:95:5)","syscall":"open"}
+error: ENOENT: no such file or directory, open './data/db.json' ENOENT: no such file or directory, open './data/db.json' {"code":"ENOENT","errno":-2,"path":"./data/db.json","stack":"Error: ENOENT: no such file or directory, open './data/db.json'\n    at Object.readFileUtf8 (node:internal/fs/sync:25:18)\n    at readFileSync (node:fs:441:19)\n    at FileProxy.read (/workspaces/film-api/src/utils/file-proxy.ts:12:35)\n    at DbProxyValidatingAdapter.read (/workspaces/film-api/src/utils/db-proxy.ts:14:36)\n    at MovieService.createMovie (/workspaces/film-api/src/services/movie.service.ts:26:41)\n    at /workspaces/film-api/src/controllers/movies-post.controller.ts:6:33\n    at Layer.handle [as handle_request] (/workspaces/film-api/node_modules/express/lib/router/layer.js:95:5)\n    at next (/workspaces/film-api/node_modules/express/lib/router/route.js:144:13)\n    at validationGuard (/workspaces/film-api/src/middleware/validation-utils.ts:6:32)\n    at Layer.handle [as handle_request] (/workspaces/film-api/node_modules/express/lib/router/layer.js:95:5)","syscall":"open"}
+error: ENOENT: no such file or directory, open './data/db.json'
+error: ENOENT: no such file or directory, open './data/db.json'
+info: Movie Server is running on http://localhost:3000
+info: Movie Server is running on http://localhost:3000
+info: Movie Server is running on http://localhost:3000
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres: {"0":"Comedy","1":"Fantasy","10":"Mystery","11":"Biography","12":"Action","13":"Film-Noir","14":"Romance","15":"Sci-Fi","16":"War","17":"Western","18":"Horror","19":"Musical","2":"Crime","20":"Sport","3":"Drama","4":"Music","5":"Adventure","6":"History","7":"Thriller","8":"Animation","9":"Family"}
+info: Movie Server is running on http://localhost:3000
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+error: ENOENT: no such file or directory, open './data/db.json'
+error: ENOENT: no such file or directory, open './data/db.json'
+error: XXX
+error: XXX
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+error: XXX
+error: XXX
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+error: ENOENT: no such file or directory, open './data/db.json'
+error: ENOENT: no such file or directory, open './data/db.json'
+info: Loading genres from /workspaces/film-api/data/db.json
+info: Loaded genres:
+info: Movie Server is running on http://localhost:3000
+error: ENOENT: no such file or directory, open './data/db.json'
+error: ENOENT: no such file or directory, open './data/db.json'

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { dbDataSchema } from "./db-validation";
 import Joi from "joi";
+import { logger } from "./logger";
 
 const validatePathExists = (value) => {
   if (fs.existsSync(value)) return value;
@@ -16,7 +17,7 @@ const envVarsSchema = Joi.object({
 export function validateEnvVars(envVars): EnvVars {
   const { error, value } = envVarsSchema.validate(envVars);
   if (error) {
-    console.error(`Config validation error: ${error.message}`);
+    logger.error(`Config validation error: ${error.message}`);
     process.exit(1);
   }
   return value;
@@ -29,17 +30,18 @@ export interface EnvVars {
 
 export function loadGenres(dbpath): string[] {
   dbpath = path.resolve(dbpath);
-  console.log(`Loading genres from ${dbpath}`);
+  logger.info(`Loading genres from ${dbpath}`);
   const rawData = JSON.parse(fs.readFileSync(dbpath, "utf-8"));
   const {
     error,
     value: { genres },
   } = dbDataSchema.validate(rawData);
   if (error) {
-    console.error(`Database validation failed: ${error.message}`);
+    logger.error(`Database validation failed: ${error.message}`);
     process.exit(1);
   }
 
-  console.log(`Loaded genres:`, genres);
+  logger.info(`Loaded genres:`);
+  console.log(genres);
   return genres;
 }
