@@ -39,6 +39,7 @@ export function loadGenres(dbpath): string[] {
     return genres;
   } catch (err) {
     logger.error(`Error loading genres from ${dbpath}: ${err.message}`);
+    logger.debug(`Using empty genres list`);
     return [];
   }
 }
