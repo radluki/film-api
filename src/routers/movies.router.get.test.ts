@@ -2,7 +2,7 @@ import express from "express";
 import { createMoviesRouter } from "./movies.router";
 import { IMovieService } from "../services/movie.service";
 import request from "supertest";
-import { validateMoviesGetQuery } from "../middleware/movies-get-query.validation";
+import { validateMoviesGetQuery as validate } from "../middleware/movies-get-query.validation";
 import { createMoviesGetController } from "../controllers/movies-get.controller";
 
 jest.mock("../config", () => ({
@@ -29,45 +29,40 @@ const app = express();
 app.use("/", createMoviesRouter(<IMovieService>movieServiceFake));
 
 const validationResponse = { errors: ["validation failed"] };
-let failValidationOnGetQuery = false;
-const validateMoviesGetQueryMock =
-  validateMoviesGetQuery as unknown as jest.Mock;
-validateMoviesGetQueryMock.mockImplementation((req, res, next) => {
-  if (req.query.genres && !Array.isArray(req.query.genres))
-    req.query.genres = [req.query.genres];
-  if (!failValidationOnGetQuery) return next();
-  res.status(400).json(validationResponse);
-});
+const validateMock = validate as unknown as jest.Mock;
 
 beforeEach(() => {
   jest.clearAllMocks();
-  failValidationOnGetQuery = false;
   shouldControllerThrow = false;
 });
 
 describe("movies router GET /", () => {
   it("should not call the controller when validation fails", () => {
-    failValidationOnGetQuery = true;
+    validateMock.mockImplementation((req, res) =>
+      res.status(400).json(validationResponse),
+    );
     return request(app)
       .get("/")
       .expect(400)
       .expect(validationResponse)
       .expect(() => {
-        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
+        expect(validateMock).toHaveBeenCalled();
       });
   });
 
   it("should respond with fakeControllerResponse when validation passes", () => {
+    validateMock.mockImplementation((req, res, next) => next());
     return request(app)
       .get("/")
       .expect(200)
       .expect(fakeControllerResponse)
       .expect(() => {
-        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
+        expect(validateMock).toHaveBeenCalled();
       });
   });
 
   it("get / should return 500 when the controller throws", () => {
+    validateMock.mockImplementation((req, res, next) => next());
     shouldControllerThrow = true;
     return request(app)
       .get("/")
@@ -77,7 +72,23 @@ describe("movies router GET /", () => {
         message: "Internal Server Error",
       })
       .expect(() => {
-        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
+        expect(validateMock).toHaveBeenCalled();
+      });
+  });
+
+  it("get / should return 500 when the validate throws", () => {
+    validateMock.mockImplementation(() => {
+      throw new Error("validate throw");
+    });
+    return request(app)
+      .get("/")
+      .expect(500)
+      .expect({
+        error: "validate throw",
+        message: "Internal Server Error",
+      })
+      .expect(() => {
+        expect(validateMock).toHaveBeenCalled();
       });
   });
 });
