@@ -3,6 +3,7 @@ import { createMoviesRouter } from "./movies.router";
 import { IMovieService, MovieCreationResult } from "../services/movie.service";
 import request from "supertest";
 import { Movie } from "../models/db.types";
+import * as validationModule from "../middleware/movies-get-query.validation";
 
 const movieServiceMock = {
   getMovies: jest.fn(),
@@ -12,8 +13,6 @@ const movieServiceMock = {
 
 const GENRE1 = "genre1";
 const GENRE2 = "genre2";
-const GENRE3 = "genre3";
-const GENRE_INVALID = "genre_invalid";
 
 const movie: Movie = {
   title: "Fake Title",
@@ -33,12 +32,37 @@ app.use("/", createMoviesRouter(<IMovieService>movieServiceMock));
 
 const serviceResult = ["xd"];
 
+const validationResponse = { errors: ["validation failed"] };
+let failValidationOnGetQuery = false;
+
+
+jest.mock("../middleware/movies-get-query.validation", () => ({
+  validateMoviesGetQuery: jest.fn(),
+}));
+
+const failValidationOnGetQueryFake = (req, res, next) => {
+  if (req.query.genres && !Array.isArray(req.query.genres))
+    req.query.genres = [req.query.genres];
+  if (!failValidationOnGetQuery) return next();
+  res.status(400).json(validationResponse);
+};
+
+(<any>validationModule.validateMoviesGetQuery).mockImplementation(
+  failValidationOnGetQueryFake,
+);
+
 beforeEach(() => {
   jest.clearAllMocks();
   movieServiceMock.getMovies.mockReturnValueOnce(serviceResult);
+  failValidationOnGetQuery = false;
 });
 
 describe("movies router GET /", () => {
+  it("should use validateMoviesGetQuery", () => {
+    failValidationOnGetQuery = true;
+    return request(app).get("/").expect(400).expect(validationResponse);
+  });
+
   it("should respond with service result", () => {
     return request(app).get("/").expect(200).expect(serviceResult);
   });
@@ -88,65 +112,8 @@ describe("movies router GET /", () => {
       });
   });
 
-  it("should accept genres as comma separated string", () => {
-    const genres = [GENRE1, GENRE2];
-    return request(app)
-      .get(`/?genres=${GENRE1},${GENRE2}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
-        expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, genres);
-      });
-  });
-
-  it("should accept genres as repeated genres=...", () => {
-    const genres = [GENRE1, GENRE2];
-    return request(app)
-      .get(`/?genres=${GENRE1}&genres=${GENRE2}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
-        expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, genres);
-      });
-  });
-
-  it("should accept genres when both formats used in a query", () => {
-    const genres = [GENRE1, GENRE2, GENRE3];
-    return request(app)
-      .get(`/?genres=${GENRE1},${GENRE2}&genres=${GENRE3}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
-        expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, genres);
-      });
-  });
-
-  it("invalid genre should cause bad request", () => {
-    const query = { genres: [GENRE1, GENRE_INVALID, GENRE2] };
-    return request(app)
-      .get("/")
-      .query(query)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body.errors).toEqual([`Invalid genres: ${GENRE_INVALID}`]);
-        expect(movieServiceMock.getMovies).not.toHaveBeenCalled();
-      });
-  });
-
-  it("nonnumeric duration should cause bad request", () => {
-    const query = { duration: "10x" };
-    return request(app)
-      .get("/")
-      .query(query)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body.errors).toEqual(["duration must be a number"]);
-        expect(movieServiceMock.getMovies).not.toHaveBeenCalled();
-      });
-  });
-
   it("get / should return 500 when service throws", () => {
-    jest.resetAllMocks();
+    movieServiceMock.getMovies.mockReset();
     movieServiceMock.getMovies.mockImplementation(() => {
       throw new Error("XXX");
     });
