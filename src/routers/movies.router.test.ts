@@ -3,7 +3,7 @@ import { createMoviesRouter } from "./movies.router";
 import { IMovieService, MovieCreationResult } from "../services/movie.service";
 import request from "supertest";
 import { Movie } from "../models/db.types";
-import * as validationModule from "../middleware/movies-get-query.validation";
+import { validateMoviesGetQuery } from "../middleware/movies-get-query.validation";
 
 const movieServiceMock = {
   getMovies: jest.fn(),
@@ -26,30 +26,30 @@ jest.mock("../config", () => ({
   GENRES: ["genre1", "genre2", "genre3", "genre4"],
   DBPATH: "dbpath",
 }));
+jest.mock("../middleware/movies-get-query.validation", () => ({
+  validateMoviesGetQuery: jest.fn(),
+}));
 
 const app = express();
 app.use("/", createMoviesRouter(<IMovieService>movieServiceMock));
 
 const serviceResult = ["xd"];
-
 const validationResponse = { errors: ["validation failed"] };
 let failValidationOnGetQuery = false;
+const validateMoviesGetQueryMock =
+  validateMoviesGetQuery as unknown as jest.Mock;
+setUpValidateMoviesGetQueryFake();
 
+function setUpValidateMoviesGetQueryFake() {
+  const failValidationOnGetQueryFake = (req, res, next) => {
+    if (req.query.genres && !Array.isArray(req.query.genres))
+      req.query.genres = [req.query.genres];
+    if (!failValidationOnGetQuery) return next();
+    res.status(400).json(validationResponse);
+  };
 
-jest.mock("../middleware/movies-get-query.validation", () => ({
-  validateMoviesGetQuery: jest.fn(),
-}));
-
-const failValidationOnGetQueryFake = (req, res, next) => {
-  if (req.query.genres && !Array.isArray(req.query.genres))
-    req.query.genres = [req.query.genres];
-  if (!failValidationOnGetQuery) return next();
-  res.status(400).json(validationResponse);
-};
-
-(<any>validationModule.validateMoviesGetQuery).mockImplementation(
-  failValidationOnGetQueryFake,
-);
+  validateMoviesGetQueryMock.mockImplementation(failValidationOnGetQueryFake);
+}
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -58,13 +58,28 @@ beforeEach(() => {
 });
 
 describe("movies router GET /", () => {
-  it("should use validateMoviesGetQuery", () => {
+  it("should not call the service when validation fails", () => {
     failValidationOnGetQuery = true;
-    return request(app).get("/").expect(400).expect(validationResponse);
+    return request(app)
+      .get("/")
+      .expect(400)
+      .expect(validationResponse)
+      .expect(() => {
+        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
+        expect(movieServiceMock.getMovies).toHaveBeenCalledTimes(0);
+      });
   });
 
-  it("should respond with service result", () => {
-    return request(app).get("/").expect(200).expect(serviceResult);
+  it("should respond with service result when validation passes", () => {
+    failValidationOnGetQuery = false;
+    return request(app)
+      .get("/")
+      .expect(200)
+      .expect(serviceResult)
+      .expect(() => {
+        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
+        expect(movieServiceMock.getMovies).toHaveBeenCalledTimes(1);
+      });
   });
 
   it("should call service with query params", () => {
@@ -73,12 +88,13 @@ describe("movies router GET /", () => {
       .get("/")
       .query(query)
       .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+      .expect(serviceResult)
+      .expect(() => {
         expect(movieServiceMock.getMovies).toHaveBeenCalledWith(
           query.duration,
           query.genres,
         );
+        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
       });
   });
 
@@ -88,12 +104,13 @@ describe("movies router GET /", () => {
       .get("/")
       .query(query)
       .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+      .expect(serviceResult)
+      .expect(() => {
         expect(movieServiceMock.getMovies).toHaveBeenCalledWith(
           query.duration,
           undefined,
         );
+        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
       });
   });
 
@@ -103,12 +120,13 @@ describe("movies router GET /", () => {
       .get("/")
       .query(query)
       .expect(200)
-      .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+      .expect(serviceResult)
+      .expect(() => {
         expect(movieServiceMock.getMovies).toHaveBeenCalledWith(
           NaN,
           query.genres,
         );
+        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
       });
   });
 
@@ -120,12 +138,13 @@ describe("movies router GET /", () => {
     return request(app)
       .get("/")
       .expect(500)
-      .expect((res) => {
-        expect(res.body).toEqual({
-          error: "XXX",
-          message: "Internal Server Error",
-        });
+      .expect({
+        error: "XXX",
+        message: "Internal Server Error",
+      })
+      .expect(() => {
         expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, undefined);
+        expect(validateMoviesGetQueryMock).toHaveBeenCalled();
       });
   });
 });
