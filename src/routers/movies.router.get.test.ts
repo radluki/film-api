@@ -15,25 +15,20 @@ jest.mock("../middleware/movies-get-query.validation", () => ({
 jest.mock("../controllers/movies-get.controller", () => ({
   createMoviesGetController: jest.fn(),
 }));
+(createMoviesGetController as any).mockImplementation(() => controllerMock);
 
-let shouldControllerThrow = false;
-const fakeControllerResponse = { message: "fake controller response" };
+const controllerResponse = { message: "fake controller response" };
+const validationResponse = { errors: ["validation failed"] };
 
-(createMoviesGetController as any).mockImplementation(() => (req, res) => {
-  if (shouldControllerThrow) throw new Error("XXX");
-  res.send(fakeControllerResponse);
-});
-
+const controllerMock = jest.fn();
+const validateMock = validate as unknown as jest.Mock;
 const movieServiceFake: any = {};
+
 const app = express();
 app.use("/", createMoviesRouter(<IMovieService>movieServiceFake));
 
-const validationResponse = { errors: ["validation failed"] };
-const validateMock = validate as unknown as jest.Mock;
-
 beforeEach(() => {
   jest.clearAllMocks();
-  shouldControllerThrow = false;
 });
 
 describe("movies router GET /", () => {
@@ -50,12 +45,15 @@ describe("movies router GET /", () => {
       });
   });
 
-  it("should respond with fakeControllerResponse when validation passes", () => {
+  it("should respond with controllerResponse when validation passes", () => {
     validateMock.mockImplementation((req, res, next) => next());
+    controllerMock.mockImplementation((req, res) =>
+      res.json(controllerResponse),
+    );
     return request(app)
       .get("/")
       .expect(200)
-      .expect(fakeControllerResponse)
+      .expect(controllerResponse)
       .expect(() => {
         expect(validateMock).toHaveBeenCalled();
       });
@@ -63,7 +61,9 @@ describe("movies router GET /", () => {
 
   it("get / should return 500 when the controller throws", () => {
     validateMock.mockImplementation((req, res, next) => next());
-    shouldControllerThrow = true;
+    controllerMock.mockImplementation(() => {
+      throw new Error("XXX");
+    });
     return request(app)
       .get("/")
       .expect(500)
