@@ -123,7 +123,7 @@ describe("movies router GET /", () => {
       .expect(serviceResult)
       .expect(() => {
         expect(movieServiceMock.getMovies).toHaveBeenCalledWith(
-          NaN,
+          undefined,
           query.genres,
         );
         expect(validateMoviesGetQueryMock).toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe("movies router GET /", () => {
         message: "Internal Server Error",
       })
       .expect(() => {
-        expect(movieServiceMock.getMovies).toHaveBeenCalledWith(NaN, undefined);
+        expect(movieServiceMock.getMovies).toHaveBeenCalledWith(undefined, undefined);
         expect(validateMoviesGetQueryMock).toHaveBeenCalled();
       });
   });
