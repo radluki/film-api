@@ -5,9 +5,7 @@ import request from "supertest";
 import { Movie } from "../models/db.types";
 
 const movieServiceMock = {
-  getMovies: jest.fn(),
   createMovie: jest.fn(),
-  getGenres: jest.fn(),
 };
 
 const GENRE1 = "genre1";
@@ -27,13 +25,10 @@ jest.mock("../config", () => ({
 }));
 
 const app = express();
-app.use("/", createMoviesRouter(<IMovieService>movieServiceMock));
-
-const serviceResult = ["xd"];
+app.use("/", createMoviesRouter(movieServiceMock as unknown as IMovieService));
 
 beforeEach(() => {
   jest.clearAllMocks();
-  movieServiceMock.getMovies.mockReturnValueOnce(serviceResult);
 });
 
 // TODO split POST tests in similar way it was done for GET

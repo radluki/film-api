@@ -5,16 +5,14 @@ import request from "supertest";
 
 const movieServiceMock = {
   getMovies: jest.fn(),
-  createMovie: jest.fn(),
-  getGenres: jest.fn(),
 };
 const serviceResult = ["xd"];
 
 const app = express();
-app.get("/", createMoviesGetController(<IMovieService>movieServiceMock));
-app.use((err: any, req: any, res: any, next: any) => {
-  res.status(500).send(err.message);
-});
+app.get(
+  "/",
+  createMoviesGetController(movieServiceMock as unknown as IMovieService),
+);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -94,8 +92,8 @@ it("should forward exception from service to error handler", () => {
   return request(app)
     .get("/")
     .expect(500)
-    .expect("XXXyyy")
-    .expect(() => {
+    .expect((res) => {
+      expect(res.text).toMatch("XXXyyy");
       expect(movieServiceMock.getMovies).toHaveBeenCalledTimes(1);
     });
 });
