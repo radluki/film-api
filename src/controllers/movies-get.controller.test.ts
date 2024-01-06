@@ -12,6 +12,9 @@ const serviceResult = ["xd"];
 
 const app = express();
 app.get("/", createMoviesGetController(<IMovieService>movieServiceMock));
+app.use((err: any, req: any, res: any, next: any) => {
+  res.status(500).send(err.message);
+});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -80,5 +83,19 @@ it("should forward duration and genres to the service", () => {
     .expect(() => {
       expect(movieServiceMock.getMovies).toHaveBeenCalledTimes(1);
       expect(movieServiceMock.getMovies).toHaveBeenCalledWith(33, ["a"]);
+    });
+});
+
+it("should forward exception from service to error handler", () => {
+  movieServiceMock.getMovies.mockReset();
+  movieServiceMock.getMovies.mockImplementation(() => {
+    throw new Error("XXXyyy");
+  });
+  return request(app)
+    .get("/")
+    .expect(500)
+    .expect("XXXyyy")
+    .expect(() => {
+      expect(movieServiceMock.getMovies).toHaveBeenCalledTimes(1);
     });
 });

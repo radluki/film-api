@@ -19,11 +19,11 @@ app.get("/", validateMoviesGetQuery, (req, res) => {
 });
 
 describe("movies router GET /", () => {
-  it("should respond with service result", () => {
+  it("should respond with 200 without query params", () => {
     return request(app).get("/").expect(200).expect({});
   });
 
-  it("should call service with query params", () => {
+  it("should pass valid query params", () => {
     const query = { duration: 10, genres: ["genre1"] };
     return request(app)
       .get("/")
@@ -34,7 +34,7 @@ describe("movies router GET /", () => {
       });
   });
 
-  it("should call service with duration", () => {
+  it("should pass valid duration", () => {
     const query = { duration: 10 };
     return request(app)
       .get("/")
@@ -45,7 +45,7 @@ describe("movies router GET /", () => {
       });
   });
 
-  it("should call service with genres", () => {
+  it("should pass valid genres", () => {
     const query = { genres: [GENRE1, GENRE2] };
     return request(app)
       .get("/")
