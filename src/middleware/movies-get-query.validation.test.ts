@@ -12,15 +12,15 @@ jest.mock("../config", () => ({
   DBPATH: "dbpath",
 }));
 
-const serviceResult = { message: "ok" };
 const app = express();
 app.get("/", validateMoviesGetQuery, (req, res) => {
-  res.send(serviceResult);
+  if (req.query.duration) req.query.duration = +req.query.duration;
+  res.send(req.query);
 });
 
 describe("movies router GET /", () => {
   it("should respond with service result", () => {
-    return request(app).get("/").expect(200).expect(serviceResult);
+    return request(app).get("/").expect(200).expect({});
   });
 
   it("should call service with query params", () => {
@@ -30,7 +30,7 @@ describe("movies router GET /", () => {
       .query(query)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+        expect(res.body).toEqual(query);
       });
   });
 
@@ -41,7 +41,7 @@ describe("movies router GET /", () => {
       .query(query)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+        expect(res.body).toEqual(query);
       });
   });
 
@@ -52,7 +52,7 @@ describe("movies router GET /", () => {
       .query(query)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+        expect(res.body).toEqual(query);
       });
   });
 
@@ -61,7 +61,7 @@ describe("movies router GET /", () => {
       .get(`/?genres=${GENRE1},${GENRE2}`)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+        expect(res.body).toEqual({ genres: [GENRE1, GENRE2] });
       });
   });
 
@@ -70,16 +70,17 @@ describe("movies router GET /", () => {
       .get(`/?genres=${GENRE1}&genres=${GENRE2}`)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+        expect(res.body).toEqual({ genres: [GENRE1, GENRE2] });
       });
   });
 
   it("should accept genres when both formats used in a query", () => {
+    const query = { genres: [GENRE1, GENRE2, GENRE3] };
     return request(app)
       .get(`/?genres=${GENRE1},${GENRE2}&genres=${GENRE3}`)
       .expect(200)
       .expect((res) => {
-        expect(res.body).toEqual(serviceResult);
+        expect(res.body).toEqual(query);
       });
   });
 
