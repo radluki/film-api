@@ -38,20 +38,14 @@ beforeEach(() => {
 });
 
 describe("movies router POST /", () => {
-  const id = 44;
-  const message = "Movie created - fake";
-  const msg = { id, message };
-  const CREATE = 201;
-
   it("should pass validate and return controller response", () => {
+    const msg = { id: 55, message: "fake msg" };
     validateMock.mockImplementation((req, res, next) => next());
-    controllerMock.mockImplementation((req, res) =>
-      res.status(CREATE).json(msg),
-    );
+    controllerMock.mockImplementation((req, res) => res.status(201).json(msg));
     return request(app)
       .post("/")
       .send(movie)
-      .expect(CREATE)
+      .expect(201)
       .expect(msg)
       .expect(() => {
         expect(validateMock).toHaveBeenCalledTimes(1);
