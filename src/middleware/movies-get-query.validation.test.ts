@@ -27,7 +27,7 @@ beforeEach(() => {
   });
 });
 
-describe("movies router GET /", () => {
+describe("validateMoviesGetQuery", () => {
   it("should respond with 200 without query params", () => {
     return request(app).get("/").expect(200).expect({});
   });

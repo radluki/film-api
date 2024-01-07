@@ -3,7 +3,6 @@ import { logger } from "./logger";
 import { loadGenres } from "./config-validation";
 import { DBPATH } from "../config";
 
-
 export function isGenreValid(genre) {
   return GENRES.includes(genre);
 }
@@ -16,7 +15,7 @@ const debounce = (func, delay) => {
     if (!timeout) {
       timeout = setTimeout(() => {
         timeout = undefined;
-        func(...args)
+        func(...args);
       }, delay);
     }
   };

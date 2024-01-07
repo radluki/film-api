@@ -1,8 +1,5 @@
 import * as dotenv from "dotenv";
-import {
-  EnvVars,
-  validateEnvVars,
-} from "./utils/config-validation";
+import { EnvVars, validateEnvVars } from "./utils/config-validation";
 
 dotenv.config();
 
