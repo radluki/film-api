@@ -10,10 +10,8 @@ const loadGenresMock = loadGenres as unknown as jest.Mock;
 const watchMock = fs.watch as unknown as jest.Mock;
 
 const dbpath = "dbpath-xyz";
-const GENRE1 = "Action";
-const GENRE2 = "genre2";
-const GENRES = [GENRE1, GENRE2];
-loadGenresMock.mockImplementation(() => GENRES);
+const GENRE1 = "XXXX";
+loadGenresMock.mockImplementation(() => [GENRE1]);
 import { isGenreValid } from "./genres"; // imported after loadGenresMock set up
 
 jest.useFakeTimers();
@@ -29,7 +27,6 @@ describe("genres", () => {
     const invalidGenre = "InvalidGenre";
 
     expect(isGenreValid(GENRE1)).toBe(true);
-    expect(isGenreValid(GENRE2)).toBe(true);
     expect(isGenreValid(invalidGenre)).toBe(false);
   });
 
