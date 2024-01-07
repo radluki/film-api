@@ -13,8 +13,12 @@ let GENRES = loadGenres(DBPATH);
 const debounce = (func, delay) => {
   let timeout;
   return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
+    if (!timeout) {
+      timeout = setTimeout(() => {
+        timeout = undefined;
+        func(...args)
+      }, delay);
+    }
   };
 };
 
@@ -25,5 +29,5 @@ fs.watch(
       logger.info(`${DBPATH} has changed. Reloading...`);
       GENRES = loadGenres(DBPATH);
     }
-  }, 200),
+  }, 500),
 );
