@@ -1,21 +1,30 @@
 import express from "express";
 import request from "supertest";
 import { validateMoviesGetQuery } from "./movies-get-query.validation";
+import { isGenreValid } from "../utils/genres";
 
 const GENRE1 = "genre1";
 const GENRE2 = "genre2";
 const GENRE3 = "genre3";
+const GENRES = [GENRE1, GENRE2, GENRE3, "genre4"];
 const GENRE_INVALID = "genre_invalid";
 
-jest.mock("../config", () => ({
-  GENRES: ["genre1", "genre2", "genre3", "genre4"],
-  DBPATH: "dbpath",
+jest.mock("../utils/genres", () => ({
+  isGenreValid: jest.fn(),
 }));
+
+const isGenreValidMock = isGenreValid as unknown as jest.Mock;
 
 const app = express();
 app.get("/", validateMoviesGetQuery, (req, res) => {
   if (req.query.duration) req.query.duration = +req.query.duration;
   res.send(req.query);
+});
+
+beforeEach(() => {
+  isGenreValidMock.mockImplementation((genre) => {
+    return GENRES.includes(genre);
+  });
 });
 
 describe("movies router GET /", () => {

@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import { GENRES } from "../config";
+import { isGenreValid } from "../utils/genres";
 
 export function validationGuard(req, res, next) {
   const errors = validationResult(req);
@@ -22,7 +22,8 @@ export function validateBodyFieldNames(value, allowedFields: string[]) {
 }
 
 export function genresValidator(value: string[]) {
-  const invalid = value.filter((item) => !GENRES.includes(item));
+  const isGenresInvalid = (genre) => !isGenreValid(genre);
+  const invalid = value.filter(isGenresInvalid);
   if (invalid.length == 0) return true;
   throw new Error(`Invalid genres: ${invalid.join(", ")}`);
 }

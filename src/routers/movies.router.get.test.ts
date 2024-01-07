@@ -5,10 +5,7 @@ import request from "supertest";
 import { validateMoviesGetQuery as validate } from "../middleware/movies-get-query.validation";
 import { createMoviesGetController } from "../controllers/movies-get.controller";
 
-jest.mock("../config", () => ({
-  GENRES: [],
-  DBPATH: "dbpath",
-}));
+jest.mock("../utils/genres", () => ({}));
 jest.mock("../middleware/movies-get-query.validation", () => ({
   validateMoviesGetQuery: jest.fn(),
 }));

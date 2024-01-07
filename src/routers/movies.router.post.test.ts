@@ -3,6 +3,7 @@ import { createMoviesRouter } from "./movies.router";
 import { IMovieService, MovieCreationResult } from "../services/movie.service";
 import request from "supertest";
 import { Movie } from "../models/db.types";
+import { isGenreValid } from "../utils/genres";
 
 const movieServiceMock = {
   createMovie: jest.fn(),
@@ -10,6 +11,7 @@ const movieServiceMock = {
 
 const GENRE1 = "genre1";
 const GENRE2 = "genre2";
+const GENRES = [GENRE1, GENRE2, "genre3", "genre4"];
 
 const movie: Movie = {
   title: "Fake Title",
@@ -19,16 +21,19 @@ const movie: Movie = {
   director: "Tim Burton",
 };
 
-jest.mock("../config", () => ({
-  GENRES: ["genre1", "genre2", "genre3", "genre4"],
-  DBPATH: "dbpath",
+jest.mock("../utils/genres", () => ({
+  isGenreValid: jest.fn(),
 }));
+const isGenreValidMock = isGenreValid as unknown as jest.Mock;
 
 const app = express();
 app.use("/", createMoviesRouter(movieServiceMock as unknown as IMovieService));
 
 beforeEach(() => {
   jest.clearAllMocks();
+  isGenreValidMock.mockImplementation((genre) => {
+    return GENRES.includes(genre);
+  });
 });
 
 // TODO split POST tests in similar way it was done for GET
@@ -231,7 +236,7 @@ describe("movies router POST /", () => {
   });
 
   it("post / should return 500 when service throws", () => {
-    jest.resetAllMocks();
+    movieServiceMock.createMovie.mockReset();
     movieServiceMock.createMovie.mockImplementation(() => {
       throw new Error("XXX");
     });
