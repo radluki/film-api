@@ -30,12 +30,12 @@ export class MovieService implements IMovieService {
         error: `Title "${movie.title}" already exists`,
       });
 
-    const newMovie = { ...movie, id: generateNewId(dbdata.movies) };
-    dbdata.movies.push(newMovie);
+    movie.id = generateNewId(dbdata.movies);
+    dbdata.movies.push(movie);
     this.dbProxy.write(dbdata);
 
     return new MovieCreationResult(StatusCodes.CREATED, {
-      id: newMovie.id,
+      id: movie.id,
       message: "Movie created",
     });
 

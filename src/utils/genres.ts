@@ -9,10 +9,10 @@ export function isGenreValid(genre) {
 
 let GENRES = loadGenres(DBPATH);
 
-const debounce = (func, delay) => {
+const debounce = (func, delay, eventType) => {
   let timeout;
   return (...args) => {
-    if (!timeout) {
+    if (!timeout && args[0] === eventType) {
       timeout = setTimeout(() => {
         timeout = undefined;
         func(...args);
@@ -23,10 +23,12 @@ const debounce = (func, delay) => {
 
 fs.watch(
   DBPATH,
-  debounce((eventType) => {
-    if (eventType === "change") {
+  debounce(
+    () => {
       logger.info(`${DBPATH} has changed. Reloading...`);
       GENRES = loadGenres(DBPATH);
-    }
-  }, 500),
+    },
+    500,
+    "change",
+  ),
 );
