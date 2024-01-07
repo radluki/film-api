@@ -3,7 +3,7 @@ import { createMoviesRouter } from "./movies.router";
 import { IMovieService, MovieCreationResult } from "../services/movie.service";
 import request from "supertest";
 import { Movie } from "../models/db.types";
-import { isGenreValid } from "../utils/genres";
+import { validateMoviesPostBody as validate } from "../middleware/movies-post-body.validation";
 
 const movieServiceMock = {
   createMovie: jest.fn(),
@@ -11,7 +11,6 @@ const movieServiceMock = {
 
 const GENRE1 = "genre1";
 const GENRE2 = "genre2";
-const GENRES = [GENRE1, GENRE2, "genre3", "genre4"];
 
 const movie: Movie = {
   title: "Fake Title",
@@ -21,19 +20,18 @@ const movie: Movie = {
   director: "Tim Burton",
 };
 
-jest.mock("../utils/genres", () => ({
-  isGenreValid: jest.fn(),
+jest.mock("../utils/genres", () => ({}));
+jest.mock("../middleware/movies-post-body.validation", () => ({
+  validateMoviesPostBody: jest.fn(),
 }));
-const isGenreValidMock = isGenreValid as unknown as jest.Mock;
+const validateMock = validate as unknown as jest.Mock;
 
 const app = express();
 app.use("/", createMoviesRouter(movieServiceMock as unknown as IMovieService));
 
 beforeEach(() => {
   jest.clearAllMocks();
-  isGenreValidMock.mockImplementation((genre) => {
-    return GENRES.includes(genre);
-  });
+  validateMock.mockImplementation((req, res, next) => next());
 });
 
 // TODO split POST tests in similar way it was done for GET
@@ -72,166 +70,19 @@ describe("movies router POST /", () => {
       });
   });
 
-  it("should block movie with an invalid field", () => {
-    const invalidMovie = { ...movie, invalidField: "invalid" };
-    const errors = ["Unknown fields: invalidField"];
+  it('should not call service when "validate" fails', () => {
+    validateMock.mockReset();
+    const errors = ["validation failed"];
+    validateMock.mockImplementation((req, res) =>
+      res.status(400).json({ errors }),
+    );
     return request(app)
       .post("/")
-      .send(invalidMovie)
+      .send(movie)
       .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
+      .expect({ errors })
+      .expect(() => {
         expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie without title", () => {
-    const invalidMovie = { ...movie, title: undefined };
-    const errors = ["title is a required string with max length 255"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie without year", () => {
-    const invalidMovie = { ...movie, year: undefined };
-    const errors = ["numeric year is required"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie with nonnumeric year", () => {
-    const invalidMovie = { ...movie, year: "xd" };
-    const errors = ["numeric year is required"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie without runtime", () => {
-    const invalidMovie = { ...movie, runtime: undefined };
-    const errors = ["numeric runtime is required"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie with nonnumeric runtime", () => {
-    const invalidMovie = { ...movie, runtime: "xd" };
-    const errors = ["numeric runtime is required"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie without director", () => {
-    const invalidMovie = { ...movie, director: undefined };
-    const errors = ["director is a required string with max length 255"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie with director as an array", () => {
-    const invalidMovie = { ...movie, director: ["d1", "d2"] };
-    const errors = ["director is a required string with max length 255"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie with actors as an array", () => {
-    const invalidMovie = { ...movie, actors: ["d1", "d2"] };
-    const errors = ["actors is optional string"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  it("should block movie with posterUrl with invalid url", () => {
-    const invalidMovie = { ...movie, posterUrl: "invalid url" };
-    const errors = ["posterUrl is an optional valid URL"];
-    return request(app)
-      .post("/")
-      .send(invalidMovie)
-      .expect(400)
-      .expect((res) => {
-        expect(res.body).toEqual({ errors });
-        expect(movieServiceMock.createMovie).not.toHaveBeenCalled();
-      });
-  });
-
-  const validUrl = "https://valid.url";
-
-  it("should accept movie with posterUrl with valid url", () => {
-    const validMovie = { ...movie, posterUrl: validUrl };
-    movieServiceMock.createMovie.mockReturnValueOnce(successResult);
-    return request(app)
-      .post("/")
-      .send(validMovie)
-      .expect(CREATE)
-      .expect((res) => {
-        expect(res.body).toEqual(msg);
-        expect(movieServiceMock.createMovie).toHaveBeenCalledWith(validMovie);
-      });
-  });
-
-  it("should accept movie with optional fields", () => {
-    const validMovie = {
-      ...movie,
-      plot: "plot",
-      actors: "actors",
-      posterUrl: validUrl,
-    };
-    movieServiceMock.createMovie.mockReturnValueOnce(successResult);
-    return request(app)
-      .post("/")
-      .send(validMovie)
-      .expect(CREATE)
-      .expect((res) => {
-        expect(res.body).toEqual(msg);
-        expect(movieServiceMock.createMovie).toHaveBeenCalledWith(validMovie);
       });
   });
 
